@@ -1,0 +1,25 @@
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# Charset for js and python files.
+[*.{js,py}]
+charset = utf-8
+
+[*.{py,rst,txt}]
+trim_trailing_whitespace = true
+end_of_line = LF
+
+[*.py]
+indent_style = tab
+
+[*.rst]
+indent_style = tab
+
+[*.yml]
+indent_style = space
+indent_size = 2
+end_of_line = LF
