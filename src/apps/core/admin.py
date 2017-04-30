@@ -5,4 +5,4 @@ from apps.core.models import User
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-	pass
+	icon = '<i class="material-icons">security</i>'

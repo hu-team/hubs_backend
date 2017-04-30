@@ -19,7 +19,17 @@ class BaseModel(models.Model):
 
 
 class User(AbstractUser):
-	avatar = models.ImageField(blank=True, upload_to='avatars/', default='')
-	"""
-	Optional avatar for the specific user.
-	"""
+	# Avatar is done in the django-avatar package. (user.avatar).
+
+	@property
+	def person(self):
+		"""
+		Get the Person class from the authenticated model. 
+		"""
+		if hasattr(self, 'person_counselor'):
+			return self.person_counselor
+		elif hasattr(self, 'person_teacher'):
+			return self.person_teacher
+		elif hasattr(self, 'person_student'):
+			return self.person_student
+		return None

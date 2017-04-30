@@ -1,0 +1,6 @@
+{% extends 'admin/base.html' %}
+{% load avatar_tags %}
+
+{% block userphoto %}
+    <a href="#">{% avatar user 65 class="circle" %}</a>
+{% endblock %}
