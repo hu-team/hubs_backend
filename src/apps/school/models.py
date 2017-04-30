@@ -108,6 +108,9 @@ class Group(BaseModel):
 	class Meta:
 		unique_together = ('code', 'school_year')
 
+	def __str__(self):
+		return self.code
+
 
 class Lesson(BaseModel):
 	course = models.ForeignKey(Course, related_name='lessons')
@@ -154,3 +157,6 @@ class Lesson(BaseModel):
 	"""
 	End date+time
 	"""
+
+	def __str__(self):
+		return '{}: from {} until {}'.format(str(self.course), self.start, self.end)

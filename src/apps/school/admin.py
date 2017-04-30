@@ -15,6 +15,9 @@ class PersonAdmin(admin.ModelAdmin):
 	def get_username(self, obj):
 		return obj.user.username
 
+	get_email.short_description = 'Email'
+	get_username.short_description = 'Username'
+
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
@@ -35,5 +38,10 @@ class GroupAdmin(admin.ModelAdmin):
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
 	icon = '<i class="material-icons">schedule</i>'
-	list_display = ('course', 'teacher', 'group', 'start', 'end')
+	list_display = ('course', 'teacher', 'group', 'get_school_year', 'start', 'end')
 	list_filter = ('course__school_year', 'teacher', 'group', 'course')
+
+	def get_school_year(self, obj):
+		return obj.course.school_year
+
+	get_school_year.short_description = 'School year'
