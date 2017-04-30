@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 
 	'apps.core.apps.CoreConfig',
 	'apps.school.apps.SchoolConfig',
+	'apps.absence.apps.AbsenceConfig',
 ]
 if DEBUG:
 	INSTALLED_APPS += [

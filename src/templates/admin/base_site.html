@@ -4,3 +4,10 @@
 {% block userphoto %}
     <a href="#">{% avatar user 65 class="circle" %}</a>
 {% endblock %}
+{% block extrastyle %}
+    <style>
+        div.content > div.row {
+            width: 100%;
+        }
+    </style>
+{% endblock %}
