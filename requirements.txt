@@ -16,3 +16,4 @@ swagger2rst
 djangorestframework==3.6.2
 pytz
 requests
+Pillow
