@@ -254,3 +254,28 @@ class Result(BaseModel):
 	"""
 	Resit attribute.
 	"""
+
+
+class PresenceManager(models.Manager):
+
+	def get_queryset(self):
+		return super().get_queryset().select_related('lesson', 'student')
+
+
+class Presence(BaseModel):
+	lesson = models.ForeignKey(
+		Lesson,
+		db_index=True
+	)
+
+	student = models.ForeignKey(
+		Student,
+		db_index=True
+	)
+
+	present = models.BooleanField(
+		null=False,
+		help_text='Is the student present.'
+	)
+
+	objects = PresenceManager()
