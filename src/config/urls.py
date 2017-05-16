@@ -7,6 +7,9 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
 	url(r'^admin/', include(admin.site.urls)),
+	url(r'^core/', include('apps.core.urls', namespace='core')),
+	url(r'^school/', include('apps.school.urls', namespace='school')),
+	url(r'^absence/', include('apps.absence.urls', namespace='absence')),
 	url(r'^$', RedirectView.as_view(url=reverse_lazy('admin:index'))),
 ]
 
