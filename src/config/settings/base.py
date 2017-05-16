@@ -139,12 +139,15 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Cache backend
-CACHES = {
-	'default': {
-		'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-		'LOCATION': CACHE_DIR,
+if hasattr(local, 'CACHES'):
+	CACHES = local.CACHES
+else:
+	CACHES = {
+		'default': {
+			'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+			'LOCATION': CACHE_DIR,
+		}
 	}
-}
 
 # API, Rest framework.
 JWT_AUTH = {

@@ -10,4 +10,7 @@ if DEBUG:
 else:
 	from .live import *
 
+if bool(os.getenv('DJANGO_DOCKER', False)):
+	from .docker import *
+
 DEBUG = bool(int(os.getenv('DJANGO_IS_DEBUG', True)))
