@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.school.models import Student, Teacher, Counselor, Course, Group, Lesson
+from apps.school.models import Student, Teacher, Counselor, Course, Group, Lesson, Result
 
 
 @admin.register(Student, Teacher, Counselor)
@@ -40,6 +40,28 @@ class LessonAdmin(admin.ModelAdmin):
 	icon = '<i class="material-icons">schedule</i>'
 	list_display = ('course', 'teacher', 'group', 'get_school_year', 'start', 'end')
 	list_filter = ('course__school_year', 'teacher', 'group', 'course')
+
+	def get_queryset(self, request):
+		query = super().get_queryset(request)
+		query.select_related('course', 'teacher', 'group')
+		return query
+
+	def get_school_year(self, obj):
+		return obj.course.school_year
+
+	get_school_year.short_description = 'School year'
+
+
+@admin.register(Result)
+class ResultAdmin(admin.ModelAdmin):
+	icon = '<i class="material-icons">thumbs_up_down</i>'
+	list_display = ('student', 'course', 'get_school_year', 'ec_points', 'number_grade', 'ladder_grade', 'created_at')
+	list_filter = ('course__school_year', 'student', 'course')
+
+	def get_queryset(self, request):
+		query = super().get_queryset(request)
+		query.select_related('course', 'student')
+		return query
 
 	def get_school_year(self, obj):
 		return obj.course.school_year

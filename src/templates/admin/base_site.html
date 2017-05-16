@@ -1,7 +1,7 @@
 {% extends 'admin/base.html' %}
 {% load avatar_tags admin_static %}
 
-{% comment %}{% block userphoto %}
+{% block userphoto %}
     <a href="#">
         {% if user and user.is_authenticated %}
             {% avatar user 65 class="circle" %}
@@ -9,7 +9,7 @@
             <a href="#"><img class="circle" src="{% static 'material/imgs/user.png' %}"></a>
         {% endif %}
     </a>
-{% endblock %}{% endcomment %}
+{% endblock %}
 {% block extrastyle %}
     <style>
         div.content > div.row {

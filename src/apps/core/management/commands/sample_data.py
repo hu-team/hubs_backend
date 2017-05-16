@@ -10,7 +10,7 @@ from django.core.management import BaseCommand
 from django.utils import timezone
 
 from apps.core.models import User
-from apps.school.models import Student, Teacher, Counselor, Group, Lesson, Course
+from apps.school.models import Student, Teacher, Counselor, Group, Lesson, Course, Result
 
 
 def fprint(msg):
@@ -49,7 +49,7 @@ class Command(BaseCommand):
 
 		# Create test courses, groups and
 		print('Generating courses...')
-		self.create_courses(10)
+		self.create_courses(4)
 
 	def create_courses(self, num):
 		for c_idx in range(num):
@@ -69,6 +69,7 @@ class Command(BaseCommand):
 					code='{}-{}'.format(self.get_random_str(3).upper(), self.get_random_str(6).upper()),
 					school_year=year,
 					name='Course \'{}\''.format(self.get_fake().job()),
+					ec_points=5, number_essays=2, number_resits=1,
 				)
 				course.teachers = teachers+slbers
 				course.save()
@@ -89,6 +90,52 @@ class Command(BaseCommand):
 					group.students = students
 					group.save()
 					groups.append(group)
+
+					result_date = year_start + datetime.timedelta(days=30)
+
+					# Generate results.
+					for student in students:
+						for i in range(0, 2):
+							is_ladder = bool(random.getrandbits(1))
+							ladder_grade = None
+							number_grade = None
+							ec_points = 0
+
+							passed = bool(random.getrandbits(1)) or bool(random.getrandbits(1))
+							not_there = bool(random.getrandbits(1)) and bool(random.getrandbits(1)) and bool(random.getrandbits(1))
+							if is_ladder:
+								if not_there:
+									ladder_grade = Result.LADDER_NT
+								elif passed:
+									ladder_grade = Result.LADDER_PASS
+									ec_points = 5
+								else:
+									ladder_grade = Result.LADDER_FAIL
+							else:
+								if not_there:
+									number_grade = 0.0
+								elif passed:
+									number_grade = round(random.uniform(5.5, 10.0), 1)
+								else:
+									number_grade = round(random.uniform(1.0, 5.4), 1)
+								if number_grade >= 5.5:
+									ec_points = 5
+
+							Result.objects.create(
+								course=course, student=student, ec_points=ec_points,
+								ladder_grade=ladder_grade, number_grade=number_grade,
+								created_at=result_date
+							)
+
+							if ec_points == 0:
+								passed = bool(random.getrandbits(1)) or bool(random.getrandbits(1))
+								Result.objects.create(
+									course=course, student=student, ec_points=5 if passed else 0,
+									ladder_grade=Result.LADDER_PASS if passed else Result.LADDER_FAIL, number_grade=None,
+									resit=True,
+									created_at=result_date + datetime.timedelta(days=4)
+								)
+
 
 					# Generate lessons (for each days (some randomized stuff)).
 					for single_day in daterange(year_start, year_end):

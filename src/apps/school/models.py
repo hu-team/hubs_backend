@@ -4,11 +4,18 @@ from apps.core.models import BaseModel, User
 from apps.school.utils import validate_school_year
 
 
+class PersonManager(models.Manager):
+	def get_queryset(self):
+		return super().get_queryset().select_related('user')
+
+
 class Person(BaseModel):
 	user = models.OneToOneField(User, related_name='person_%(class)s')
 	"""
 	Link to auth user model. Will shadow all personal details like name and email from and to there.
 	"""
+
+	objects = PersonManager()
 
 	class Meta:
 		abstract = True
@@ -70,6 +77,31 @@ class Course(BaseModel):
 	)
 	"""
 	Teachers giving this course to the students.
+	"""
+
+	ec_points = models.PositiveIntegerField(
+		null=False,
+		help_text='EC Points that the student can get.'
+	)
+	"""
+	The maximum EC points the student can get.
+	"""
+
+	number_essays = models.PositiveIntegerField(
+		null=False,
+		help_text='Number of essays and thus results the student can get on this course.'
+	)
+	"""
+	Number of essays the student gets in this course.
+	"""
+
+	number_resits = models.PositiveIntegerField(
+		null=False,
+		default=1,
+		help_text='Number of resits possible.'
+	)
+	"""
+	Number of resits possible.
 	"""
 
 	class Meta:
@@ -160,3 +192,65 @@ class Lesson(BaseModel):
 
 	def __str__(self):
 		return '{}: from {} until {}'.format(str(self.course), self.start, self.end)
+
+
+class Result(BaseModel):
+	LADDER_NT = 0
+	LADDER_FAIL = 1
+	LADDER_PASS = 2
+	LADDER_CHOICES = (
+		(LADDER_NT, 'Not present'),
+		(LADDER_FAIL, 'Failed'),
+		(LADDER_PASS, 'Passed'),
+	)
+
+	course = models.ForeignKey(
+		Course
+	)
+	"""
+	Course of the result entry.
+	"""
+
+	student = models.ForeignKey(
+		Student,
+		related_name='results',
+		db_index=True
+	)
+	"""
+	Student of the result entry.
+	"""
+
+	ec_points = models.PositiveIntegerField(
+		null=True,
+		help_text='The EC Points the student got with this result.'
+	)
+	"""
+	The EC Points the student got with this result.
+	"""
+
+	number_grade = models.PositiveIntegerField(
+		null=True,
+		help_text='The grade from 0 to 10 where 0 is not present and 10 is fully passed.'
+	)
+	"""
+	Number grade.
+	"""
+
+	ladder_grade = models.DecimalField(
+		choices=LADDER_CHOICES,
+		null=True,
+		max_digits=2,
+		decimal_places=1,
+		help_text='The grade in ladder format.'
+	)
+	"""
+	Ladder grade.
+	"""
+
+	resit = models.BooleanField(
+		default=False,
+		help_text='Is this result from a resit essay.'
+	)
+	"""
+	Resit attribute.
+	"""

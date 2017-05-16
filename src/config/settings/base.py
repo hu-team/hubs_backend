@@ -13,6 +13,7 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 TMP_DIR = os.path.join(BASE_DIR, 'tmp')
+CACHE_DIR = os.path.join(TMP_DIR, 'cache')
 DATA_DIR = os.path.join(os.path.dirname(BASE_DIR), 'data')
 
 DEBUG = bool(int(os.getenv('DJANGO_IS_DEBUG', True)))
@@ -20,6 +21,7 @@ DEBUG = bool(int(os.getenv('DJANGO_IS_DEBUG', True)))
 from config.settings import local
 try:
 	os.makedirs(TMP_DIR)
+	os.makedirs(CACHE_DIR)
 except Exception:
 	pass
 
@@ -138,8 +140,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 # Cache backend
 CACHES = {
 	'default': {
-		'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-		'LOCATION': 'django_cache',
+		'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+		'LOCATION': CACHE_DIR,
 	}
 }
 
