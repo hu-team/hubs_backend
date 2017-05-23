@@ -11,6 +11,8 @@ class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 	model = Lesson
 	queryset = Lesson.objects.all()
 	serializer_class = serializers.LessonSerializer
+	filter_fields = ('course', 'group', 'teacher')
+	ordering_fields = ('start', 'end')
 
 	def get_queryset(self):
 		# TODO: Date filtering.
