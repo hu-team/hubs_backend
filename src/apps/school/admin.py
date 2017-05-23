@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.school.models import Student, Teacher, Counselor, Course, Group, Lesson, Result
+from apps.school.models import Student, Teacher, Counselor, Course, Group, Lesson, Result, Presence
 
 
 @admin.register(Student, Teacher, Counselor)
@@ -35,11 +35,15 @@ class GroupAdmin(admin.ModelAdmin):
 	search_fields = ('code', 'school_year')
 
 
+class PresenceInlineAdmin(admin.TabularInline):
+	model = Presence
+
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
 	icon = '<i class="material-icons">schedule</i>'
 	list_display = ('course', 'teacher', 'group', 'get_school_year', 'start', 'end')
 	list_filter = ('course__school_year', 'teacher', 'group', 'course')
+	inlines = [PresenceInlineAdmin]
 
 	def get_queryset(self, request):
 		query = super().get_queryset(request)
