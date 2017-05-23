@@ -17,6 +17,7 @@ sphinx_rtd_theme
 swagger2rst
 djangorestframework==3.6.3
 djangorestframework-jwt==1.10.0
+coreapi
 PyJWT>=1.4.0,<2.0.0
 pytz
 requests

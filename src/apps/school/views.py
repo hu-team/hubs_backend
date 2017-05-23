@@ -1,3 +1,22 @@
-from django.shortcuts import render
+import datetime
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
-# Create your views here.
+from apps.school.models import Lesson
+from apps.school import serializers
+
+
+class LessonViewSet(viewsets.ReadOnlyModelViewSet):
+	permission_classes = [IsAuthenticated]
+	model = Lesson
+	queryset = Lesson.objects.all()
+	serializer_class = serializers.LessonSerializer
+
+	def get_queryset(self):
+		# TODO: Date filtering.
+		# filter_start = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+
+		if self.request.user.is_teacher:
+			return Lesson.objects.filter(teacher=self.request.user.person)
+		elif self.request.user.is_student:
+			return Lesson.objects.filter(group__in=self.request.user.person.groups.all())

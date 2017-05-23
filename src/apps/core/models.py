@@ -29,7 +29,7 @@ class User(AbstractUser):
 	@property
 	def person(self):
 		"""
-		Get the Person class from the authenticated model. 
+		Get the Person class from the authenticated model.
 		"""
 		if hasattr(self, 'person_counselor'):
 			return self.person_counselor
@@ -38,3 +38,15 @@ class User(AbstractUser):
 		elif hasattr(self, 'person_student'):
 			return self.person_student
 		return None
+
+	@property
+	def is_counselor(self):
+		return hasattr(self, 'person_counselor')
+
+	@property
+	def is_teacher(self):
+		return hasattr(self, 'person_counselor') or hasattr(self, 'person_teacher')
+
+	@property
+	def is_student(self):
+		return hasattr(self, 'person_student')

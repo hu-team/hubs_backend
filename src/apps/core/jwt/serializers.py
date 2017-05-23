@@ -100,7 +100,7 @@ class RefreshJSONWebTokenSerializer(VerificationBaseSerializer):
 			msg = _('orig_iat field is required.')
 			raise serializers.ValidationError(msg)
 
-		new_payload = jwt_payload_handler(dict(user=user, instance=instance))
+		new_payload = jwt_payload_handler(dict(user=user))
 		new_payload['orig_iat'] = orig_iat
 
 		return {
