@@ -1,46 +1,42 @@
-version: '2.1'
+version: '3.2'
 services:
   web:
     build: .
-    restart: always
+    restart: unless-stopped
     volumes:
-      - .:/app
+      - '.:/app'
     expose:
-      - "8000"
+      - '8000'
     links:
       - mysql
-      #- redis
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
+    env_file: .env
     environment:
       DJANGO_DOCKER: 1
-  #
-  #redis:
-  #  image: redis:latest
-  #  volumes:
-  #    - /var/lib/redis
-  #  ports:
-  #    - "6379"
-
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
+  redis:
+    image: 'redis:latest'
     volumes:
-      - .:/app
-      - ./src/config/nginx:/etc/nginx/conf.d
+      - './cache:/var/lib/redis'
+    ports:
+      - '6379'
+  nginx:
+    image: 'nginx:latest'
+    ports:
+      - '80:80'
+    volumes:
+      - '.:/app'
+      - './src/config/nginx:/etc/nginx/conf.d'
     links:
       - web
     depends_on:
       - web
-
   mysql:
-    image: mysql:latest
+    image: 'mysql:latest'
     volumes:
       - /var/lib/mysql
     ports:
-      - "33306:3306"
+      - '33306:3306'
     healthcheck:
       test: mysqladmin -uroot -phubs ping
       interval: 2s
