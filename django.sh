@@ -1,5 +1,5 @@
 #!/bin/sh
-cd src
+cd /app/src
 
 until nc -z -v -w30 mysql 3306
 do
