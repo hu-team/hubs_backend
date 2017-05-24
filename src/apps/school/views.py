@@ -16,15 +16,14 @@ class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 
 	def get_queryset(self):
 		queryset = super().get_queryset()
-
-		filter_from = datetime.datetime.now()
+		filter_from = datetime.datetime.utcnow()
 
 		if self.request.user.is_teacher:
 			queryset = queryset.filter(teacher=self.request.user.person)
 		elif self.request.user.is_student:
 			queryset = queryset.filter(group__in=self.request.user.person.groups.all())
 
-		return queryset.filter(end__lte=filter_from)
+		return queryset.filter(end__gte=filter_from)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
