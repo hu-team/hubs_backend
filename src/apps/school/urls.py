@@ -7,6 +7,8 @@ from . import views
 
 router = DefaultRouter()
 router.register(r'lessons', views.LessonViewSet)
+router.register(r'groups', views.GroupViewSet)
+router.register(r'presences', views.PresenceViewSet)
 
 schema_view = get_schema_view(title='Hubs API')
 
