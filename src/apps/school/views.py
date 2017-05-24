@@ -15,10 +15,13 @@ class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 	ordering_fields = ('start', 'end')
 
 	def get_queryset(self):
-		# TODO: Date filtering.
-		# filter_start = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+		queryset = super().get_queryset()
+
+		filter_from = datetime.datetime.now()
 
 		if self.request.user.is_teacher:
-			return Lesson.objects.filter(teacher=self.request.user.person)
+			queryset = queryset.filter(teacher=self.request.user.person)
 		elif self.request.user.is_student:
-			return Lesson.objects.filter(group__in=self.request.user.person.groups.all())
+			queryset = queryset.filter(group__in=self.request.user.person.groups.all())
+
+		return queryset.filter(end__lte=filter_from)
