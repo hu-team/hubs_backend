@@ -4,8 +4,11 @@ from rest_framework.schemas import get_schema_view
 from rest_framework_jwt.views import obtain_jwt_token
 
 from apps.core.jwt.views import refresh_jwt_token, verify_jwt_token
+from . import views
 
 router = DefaultRouter()
+router.register(r'users', views.UserViewSet)
+router.register(r'students', views.StudentViewSet, base_name='students')
 
 schema_view = get_schema_view(title='Hubs API')
 

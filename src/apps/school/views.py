@@ -30,8 +30,8 @@ class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [IsAuthenticated]
 	model = Group
-	queryset = Group.objects.all()
-	serializer_class =  serializers.GroupSerializer
+	queryset = Group.objects.all().prefetch_related('students')
+	serializer_class = serializers.GroupSerializer
 
 
 class PresenceViewSet(viewsets.ReadOnlyModelViewSet):
