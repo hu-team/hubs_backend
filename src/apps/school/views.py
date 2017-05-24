@@ -23,6 +23,7 @@ class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 		elif self.request.user.is_student:
 			queryset = queryset.filter(group__in=self.request.user.person.groups.all())
 
+		queryset = queryset.order_by('end')
 		return queryset.filter(end__gte=filter_from)
 
 
