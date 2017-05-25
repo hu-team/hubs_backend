@@ -6,8 +6,7 @@ from apps.school.models import Lesson, Group, Presence, Course
 
 class LessonSerializer(serializers.ModelSerializer):
 
-	teacher = TeacherSerializer()
-	
+	teacher = TeacherSerializer(read_only=True)
 
 	class Meta:
 		model = Lesson
@@ -19,10 +18,12 @@ class LessonSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
 
+	teachers = TeacherSerializer(many=True, read_only=True)
+
 	class Meta:
 		model = Course
 		fields = (
-			'code', 'name', 'ec_points'
+			'code', 'name', 'ec_points', 'teachers'
 		)
 
 

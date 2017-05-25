@@ -55,6 +55,7 @@ class StudentSerializer(serializers.ModelSerializer):
 	def get_email(self, obj):
 		return obj.user.email
 
+
 class TeacherSerializer(serializers.ModelSerializer):
 	first_name = serializers.SerializerMethodField()
 	last_name = serializers.SerializerMethodField()
