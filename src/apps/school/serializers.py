@@ -1,15 +1,28 @@
 from rest_framework import serializers
 
-from apps.core.serializers import StudentSerializer
-from apps.school.models import Lesson, Group, Presence
+from apps.core.serializers import StudentSerializer, TeacherSerializer
+from apps.school.models import Lesson, Group, Presence, Course
 
 
 class LessonSerializer(serializers.ModelSerializer):
+
+	teacher = TeacherSerializer()
+	
+
 	class Meta:
 		model = Lesson
 		fields = (
 			'course', 'ignore_absence', 'teacher', 'group',
 			'start', 'end',
+		)
+
+
+class CourseSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = Course
+		fields = (
+			'code', 'name', 'ec_points'
 		)
 
 
@@ -32,6 +45,6 @@ class GroupSerializer(serializers.ModelSerializer):
 class PresenceSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Presence
-		fields =(
+		fields = (
 			'present',
 		)

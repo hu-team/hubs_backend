@@ -2,14 +2,14 @@ import datetime
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from apps.school.models import Lesson, Group, Presence
+from apps.school.models import Lesson, Group, Presence, Course
 from apps.school import serializers
 
 
 class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [IsAuthenticated]
 	model = Lesson
-	queryset = Lesson.objects.all()
+	queryset = Lesson.objects.all().prefetch_related('teacher', 'course')
 	serializer_class = serializers.LessonSerializer
 	filter_fields = ('course', 'group', 'teacher')
 	ordering_fields = ('start', 'end')
@@ -27,6 +27,13 @@ class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 		return queryset.filter(end__gte=filter_from)
 
 
+class CourseViewSet(viewsets.ReadOnlyModelViewSet):
+	permission_classes = [IsAuthenticated]
+	model = Course
+	queryset = Course.objects.all()
+	serializer_class = serializers.CourseSerializer
+
+
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [IsAuthenticated]
 	model = Group
@@ -34,7 +41,7 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 	serializer_class = serializers.GroupSerializer
 
 
-class PresenceViewSet(viewsets.ReadOnlyModelViewSet):
+class PresenceViewSet(viewsets.ModelViewSet):
 	permission_classes = [IsAuthenticated]
 	model = Presence
 	queryset = Presence.objects.all()
