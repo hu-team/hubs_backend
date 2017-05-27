@@ -3,6 +3,7 @@ import string
 import typing
 import datetime
 
+from dateutil.relativedelta import relativedelta
 from django.utils.timezone import utc
 from faker import Factory
 
@@ -19,9 +20,9 @@ def fprint(msg):
 
 def daterange(start_date, end_date) -> typing.Generator[datetime.datetime, datetime.datetime, None]:
 	"""
-	:param start_date: 
-	:param end_date: 
-	:return: 
+	:param start_date:
+	:param end_date:
+	:return:
 	:rtype: datetime.datetime
 	"""
 	for n in range(int ((end_date - start_date).days)):
@@ -59,7 +60,7 @@ class Command(BaseCommand):
 			slbers = list(self.generate_slbers(2))
 
 			# Decide school year
-			school_years = list(self.school_year_range(years_back=5))
+			school_years = list(self.school_year_range(years_back=4))
 
 			# Generate courses. Including groups and students..
 			courses = list()
@@ -222,6 +223,7 @@ class Command(BaseCommand):
 
 	def school_year_range(self, years_back):
 		now = timezone.now()
+		now += relativedelta(years=2)
 		if now.month > 6:
 			this_year = (
 				datetime.datetime(year=now.year, month=8, day=1, tzinfo=utc),

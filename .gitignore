@@ -147,3 +147,4 @@ fabric.properties
 /src/tmp
 /src/static
 /src/media
+/cache

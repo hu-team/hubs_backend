@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 
 	'rest_framework',
 	'django_extensions',
+	'django_filters',
 	'avatar',
 
 	'apps.core.apps.CoreConfig',
@@ -191,5 +192,10 @@ REST_FRAMEWORK = {
 		'apps.core.jwt.authentication.JWTTokenAuthentication',
 		'rest_framework.authentication.TokenAuthentication',
 		'apps.core.jwt.authentication.CsrfExemptSessionAuthentication',
-	)
+	),
+	'DEFAULT_FILTER_BACKENDS': (
+		'django_filters.rest_framework.DjangoFilterBackend',
+	),
+	'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+	'PAGE_SIZE': 100,
 }
