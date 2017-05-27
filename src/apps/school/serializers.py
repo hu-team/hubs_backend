@@ -4,18 +4,6 @@ from apps.core.serializers import StudentSerializer, TeacherSerializer
 from apps.school.models import Lesson, Group, Presence, Course
 
 
-class LessonSerializer(serializers.ModelSerializer):
-
-	teacher = TeacherSerializer(read_only=True)
-
-	class Meta:
-		model = Lesson
-		fields = (
-			'course', 'ignore_absence', 'teacher', 'group',
-			'start', 'end',
-		)
-
-
 class CourseSerializer(serializers.ModelSerializer):
 
 	teachers = TeacherSerializer(many=True, read_only=True)
@@ -25,7 +13,6 @@ class CourseSerializer(serializers.ModelSerializer):
 		fields = (
 			'code', 'name', 'ec_points', 'teachers'
 		)
-
 
 class GroupSerializer(serializers.ModelSerializer):
 	students = StudentSerializer(
@@ -42,6 +29,19 @@ class GroupSerializer(serializers.ModelSerializer):
 			'code', 'school_year', 'students',
 		)
 
+
+class LessonSerializer(serializers.ModelSerializer):
+
+	teacher = TeacherSerializer(read_only=True)
+	course = CourseSerializer(read_only=True)
+	group = GroupSerializer(read_only=True)
+
+	class Meta:
+		model = Lesson
+		fields = (
+			'course', 'ignore_absence', 'teacher', 'group',
+			'start', 'end',
+		)
 
 class PresenceSerializer(serializers.ModelSerializer):
 	class Meta:
