@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from apps.school.models import Lesson, Group, Presence, Course
 from apps.school import serializers
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class LessonViewSet(viewsets.ReadOnlyModelViewSet):
@@ -11,7 +12,8 @@ class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 	model = Lesson
 	queryset = Lesson.objects.all().prefetch_related('teacher', 'course')
 	serializer_class = serializers.LessonSerializer
-	filter_fields = ('course', 'group', 'teacher')
+	filter_backends = (DjangoFilterBackend,)
+	filter_fields = ('course', 'group', 'teacher', 'id')
 	ordering_fields = ('start', 'end')
 
 	def get_queryset(self):
