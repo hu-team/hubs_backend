@@ -148,3 +148,5 @@ fabric.properties
 /src/static
 /src/media
 /cache
+
+/mysql

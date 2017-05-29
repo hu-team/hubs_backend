@@ -35,6 +35,7 @@ services:
     image: 'mysql:latest'
     volumes:
       - /var/lib/mysql
+      - ./mysql:/var/lib/mysql
     ports:
       - '33306:3306'
     healthcheck:
