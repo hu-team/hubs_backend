@@ -5,7 +5,6 @@ from apps.school.models import Lesson, Group, Presence, Course
 
 
 class CourseSerializer(serializers.ModelSerializer):
-
 	teachers = TeacherSerializer(many=True, read_only=True)
 
 	class Meta:
@@ -14,10 +13,12 @@ class CourseSerializer(serializers.ModelSerializer):
 			'code', 'name', 'ec_points', 'teachers'
 		)
 
+
 class GroupSerializer(serializers.ModelSerializer):
 	students = StudentSerializer(
 		many=True
 	)
+
 	# students = serializers.HyperlinkedRelatedField(
 	# 	view_name='core:students-detail', read_only=True,
 	# 	many=True
@@ -31,7 +32,6 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class LessonSerializer(serializers.ModelSerializer):
-
 	teacher = TeacherSerializer(read_only=True)
 	course = CourseSerializer(read_only=True)
 	group = GroupSerializer(read_only=True)
@@ -43,9 +43,10 @@ class LessonSerializer(serializers.ModelSerializer):
 			'start', 'end',
 		)
 
+
 class PresenceSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Presence
 		fields = (
-			'present',
+			'lesson', 'student', 'present'
 		)

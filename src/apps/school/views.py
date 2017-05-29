@@ -1,5 +1,7 @@
 import datetime
-from rest_framework import viewsets
+
+from rest_framework.response import Response
+from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 
 from apps.school.models import Lesson, Group, Presence, Course
@@ -48,3 +50,4 @@ class PresenceViewSet(viewsets.ModelViewSet):
 	model = Presence
 	queryset = Presence.objects.all()
 	serializer_class = serializers.PresenceSerializer
+
