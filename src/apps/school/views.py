@@ -12,7 +12,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [IsAuthenticated]
 	model = Lesson
-	queryset = Lesson.objects.all().prefetch_related('teacher', 'course')
+	queryset = Lesson.objects.all().prefetch_related('teacher', 'course', 'group', 'group__students')
 	serializer_class = serializers.LessonSerializer
 	filter_backends = (DjangoFilterBackend,)
 	filter_fields = ('course', 'group', 'teacher', 'id')
