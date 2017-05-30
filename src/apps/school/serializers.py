@@ -45,8 +45,10 @@ class LessonSerializer(serializers.ModelSerializer):
 
 
 class PresenceSerializer(serializers.ModelSerializer):
+	present = serializers.BooleanField(default=False)
+
 	class Meta:
 		model = Presence
 		fields = (
-			'lesson', 'student', 'present'
+			'id', 'lesson', 'student', 'present'
 		)

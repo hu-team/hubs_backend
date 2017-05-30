@@ -50,4 +50,5 @@ class PresenceViewSet(viewsets.ModelViewSet):
 	model = Presence
 	queryset = Presence.objects.all()
 	serializer_class = serializers.PresenceSerializer
-
+	filter_backends = (DjangoFilterBackend,)
+	filter_fields = ('lesson',)

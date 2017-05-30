@@ -279,3 +279,6 @@ class Presence(BaseModel):
 	)
 
 	objects = PresenceManager()
+
+	class Meta:
+		unique_together = ('lesson', 'student')
