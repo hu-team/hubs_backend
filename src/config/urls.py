@@ -4,6 +4,9 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import reverse_lazy
 from django.views.generic import RedirectView
+from rest_framework_swagger.views import get_swagger_view
+
+schema_view = get_swagger_view(title='Hubs API')
 
 urlpatterns = [
 	url(r'^admin/', include(admin.site.urls)),
@@ -11,6 +14,7 @@ urlpatterns = [
 	url(r'^school/', include('apps.school.urls', namespace='school')),
 	url(r'^absence/', include('apps.absence.urls', namespace='absence')),
 	url(r'^$', RedirectView.as_view(url=reverse_lazy('admin:index'))),
+	url(r'^schema/$', schema_view),
 ]
 
 # Makes media files work on dev server
