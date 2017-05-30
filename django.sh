@@ -11,10 +11,10 @@ done
 python3 manage.py collectstatic --noinput
 python3 manage.py migrate --noinput
 
-if [ "$DJANGO_IS_DEBUG" = "" ]
+if [ "$DJANGO_IS_DEBUG" = "0" ]
 then
    echo "Starting production server..."
-   /usr/local/bin/gunicorn config.wsgi -w 4 -b 0.0.0.0:8000 --chdir=/app/src
+   /usr/local/bin/gunicorn config.wsgi -w 6 -b 0.0.0.0:8000 --chdir=/app/src
 else
    echo "Starting development server..."
    python3 manage.py runserver_plus 0.0.0.0:8000

@@ -5,6 +5,7 @@ import logging
 from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_extensions.cache.decorators import cache_response
 
 from apps.absence.models import AbsenceReport
 from apps.school.models import Lesson, Group, Presence, Course
@@ -39,6 +40,10 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 	model = Course
 	queryset = Course.objects.all()
 	serializer_class = serializers.CourseSerializer
+
+	@cache_response(60 * 15)
+	def list(self, request, *args, **kwargs):
+		return super().list(request, *args, **kwargs)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
