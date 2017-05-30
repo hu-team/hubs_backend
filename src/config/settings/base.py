@@ -52,8 +52,8 @@ INSTALLED_APPS = [
 	'apps.core.apps.CoreConfig',
 	'apps.school.apps.SchoolConfig',
 	'apps.absence.apps.AbsenceConfig',
-	
-	'corsheaders', 
+
+	'corsheaders',
 ]
 if DEBUG:
 	INSTALLED_APPS += [
@@ -69,7 +69,7 @@ MIDDLEWARE = [
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 	'corsheaders.middleware.CorsMiddleware',
-  'django.middleware.common.CommonMiddleware',
+	'django.middleware.common.CommonMiddleware',
 ]
 if DEBUG:
 	MIDDLEWARE = ['debug_toolbar.middleware.DebugToolbarMiddleware'] + MIDDLEWARE
