@@ -1,5 +1,7 @@
 import uuid
 import warnings
+from pprint import pprint
+
 import jwt
 
 from calendar import timegm
@@ -10,6 +12,7 @@ from rest_framework_jwt.compat import get_username_field, get_username
 from rest_framework_jwt.settings import api_settings
 
 from apps.core.serializers import UserSerializer
+from apps.school.models import Teacher, Student
 
 
 def jwt_payload_handler(payload):
@@ -21,16 +24,20 @@ def jwt_payload_handler(payload):
 	username_field = get_username_field()
 	username = get_username(user)
 
-	warnings.warn(
-		'The following fields will be removed in the future: '
-		'`email` and `user_id`. ',
-		DeprecationWarning
-	)
+	user_type = 'unknown'
+	if user.person and isinstance(user.person, Teacher):
+		if user.person.is_counselor:
+			user_type = 'counselor'
+		else:
+			user_type = 'teacher'
+	elif user.person and isinstance(user.person, Student):
+		user_type = 'student'
 
 	payload = {
 		'user_id': user.pk,
 		'email': user.email,
 		'username': username,
+		'user_type': user_type,
 		'exp': datetime.utcnow() + api_settings.JWT_EXPIRATION_DELTA
 	}
 	if isinstance(user.pk, uuid.UUID):

@@ -31,9 +31,7 @@ class User(AbstractUser):
 		"""
 		Get the Person class from the authenticated model.
 		"""
-		if hasattr(self, 'person_counselor'):
-			return self.person_counselor
-		elif hasattr(self, 'person_teacher'):
+		if hasattr(self, 'person_teacher'):
 			return self.person_teacher
 		elif hasattr(self, 'person_student'):
 			return self.person_student
@@ -41,11 +39,11 @@ class User(AbstractUser):
 
 	@property
 	def is_counselor(self):
-		return hasattr(self, 'person_counselor')
+		return hasattr(self, 'person_teacher') and self.person_teacher.is_counselor
 
 	@property
 	def is_teacher(self):
-		return hasattr(self, 'person_counselor') or hasattr(self, 'person_teacher')
+		return hasattr(self, 'person_teacher')
 
 	@property
 	def is_student(self):

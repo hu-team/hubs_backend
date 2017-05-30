@@ -29,6 +29,11 @@ class Person(BaseModel):
 
 
 class Student(Person):
+	student_number = models.CharField(max_length=128, null=True, default=None, unique=True)
+	"""
+	Student number.
+	"""
+
 	joined_at = models.DateTimeField()
 	"""
 	Date that the student joined the school.
@@ -36,11 +41,18 @@ class Student(Person):
 
 
 class Teacher(Person):
+	is_counselor = models.BooleanField(default=False)
 	pass
 
 
 class Counselor(Teacher):
-	pass
+	"""
+	DONT USE THIS MODEL!
+	"""
+
+	class Meta:
+		managed = False
+		abstract = True
 
 
 class Course(BaseModel):

@@ -11,7 +11,7 @@ from django.core.management import BaseCommand
 from django.utils import timezone
 
 from apps.core.models import User
-from apps.school.models import Student, Teacher, Counselor, Group, Lesson, Course, Result
+from apps.school.models import Student, Teacher, Group, Lesson, Course, Result
 
 
 def fprint(msg):
@@ -181,8 +181,9 @@ class Command(BaseCommand):
 		for i in range(0, num):
 			fake = self.get_fake()
 			user = self.generate_user(fake)
-			yield Counselor.objects.create(
-				user=user
+			yield Teacher.objects.create(
+				user=user,
+				is_counselor=True,
 			)
 
 	def generate_students(self, num, years_back=None):

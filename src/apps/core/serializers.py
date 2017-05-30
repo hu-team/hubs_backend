@@ -40,7 +40,7 @@ class StudentSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Student
 		fields = (
-			'id', 'first_name', 'last_name', 'username', 'email',
+			'id', 'first_name', 'last_name', 'username', 'email', 'student_number',
 		)
 
 	def get_first_name(self, obj):
@@ -61,11 +61,12 @@ class TeacherSerializer(serializers.ModelSerializer):
 	last_name = serializers.SerializerMethodField()
 	username = serializers.SerializerMethodField()
 	email = serializers.SerializerMethodField()
+	user_type = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Teacher
 		fields = (
-			'id', 'first_name', 'last_name', 'username', 'email',
+			'id', 'first_name', 'last_name', 'username', 'email', 'user_type',
 		)
 
 	def get_first_name(self, obj):
@@ -79,3 +80,9 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 	def get_email(self, obj):
 		return obj.user.email
+
+	def get_user_type(self, obj):
+		if obj.is_counselor:
+			return 'counselor'
+		else:
+			return 'teacher'

@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from apps.school.models import Student, Teacher, Counselor, Course, Group, Lesson, Result, Presence
+from apps.school.models import Student, Teacher, Course, Group, Lesson, Result, Presence
 
 
-@admin.register(Student, Teacher, Counselor)
+@admin.register(Student, Teacher)
 class PersonAdmin(admin.ModelAdmin):
 	icon = '<i class="material-icons">person</i>'
 	list_display = ('full_name', 'get_email', 'get_username')
