@@ -1,3 +1,4 @@
+import os
 
 SECRET_KEY = 'chanafhsdfjasdfhklgeme'
 
@@ -12,18 +13,25 @@ DATABASES = {
 	}
 }
 
-CACHES = {
-	'default': {
-		'BACKEND': 'django_redis.cache.RedisCache',
-		'LOCATION': 'redis://redis:6379/0',
-		'OPTIONS': {
-			'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+if bool(int(os.getenv('DJANGO_IS_DEBUG', 0))):
+	CACHES = {
+		'default': {
+			'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
 		}
 	}
-}
+else:
+	CACHES = {
+		'default': {
+			'BACKEND': 'django_redis.cache.RedisCache',
+			'LOCATION': 'redis://redis:6379/0',
+			'OPTIONS': {
+				'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+			}
+		}
+	}
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_CACHE_ALIAS = 'default'
+	SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+	SESSION_CACHE_ALIAS = 'default'
 
 
 def show_toolbar(request):

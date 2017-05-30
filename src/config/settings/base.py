@@ -198,5 +198,6 @@ REST_FRAMEWORK = {
 		'django_filters.rest_framework.DjangoFilterBackend',
 	),
 	'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+	'DEFAULT_CACHE_RESPONSE_TIMEOUT': 5 * 60,  # 5 Minutes.
 	'PAGE_SIZE': 100,
 }
