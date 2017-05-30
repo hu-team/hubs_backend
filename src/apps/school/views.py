@@ -1,9 +1,12 @@
 import datetime
 
-from rest_framework.response import Response
-from rest_framework import viewsets, status
+import logging
+
+from django.db.models import Q
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from apps.absence.models import AbsenceReport
 from apps.school.models import Lesson, Group, Presence, Course
 from apps.school import serializers
 from django_filters.rest_framework import DjangoFilterBackend
@@ -52,3 +55,36 @@ class PresenceViewSet(viewsets.ModelViewSet):
 	serializer_class = serializers.PresenceSerializer
 	filter_backends = (DjangoFilterBackend,)
 	filter_fields = ('lesson',)
+
+	def prefill(self, lesson):
+		"""
+		:param lesson: Lesson instance
+		:type lesson: apps.school.models.Lesson
+		"""
+		for student in lesson.group.students.all():
+			report = AbsenceReport.objects.filter(
+				Q(student=student) & Q(report_from__lte=lesson.start) & Q(
+					Q(report_until__isnull=True) | Q(report_until__gte=lesson.start)
+				)
+			).first()
+
+			Presence.objects.get_or_create(
+				lesson=lesson,
+				student=student,
+				defaults=dict(
+					absence_report=report,
+					present=False
+				)
+			)
+
+	def list(self, request, *args, **kwargs):
+		if 'lesson' in request.GET and 'prefill' in request.GET and request.GET['prefill']:
+			try:
+				lesson = Lesson.objects.select_related('group').prefetch_related('group__students').get(pk=request.GET['lesson'])
+				self.prefill(lesson)
+			except Exception as e:
+				logging.exception(e)
+				pass
+
+		# if self.request.query_params.get
+		return super().list(request, *args, **kwargs)

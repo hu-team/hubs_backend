@@ -278,6 +278,11 @@ class Presence(BaseModel):
 		help_text='Is the student present.'
 	)
 
+	absence_report = models.ForeignKey('absence.AbsenceReport', null=True, default=None)
+	"""
+	Optional report to a report that is valid at the time of creation.
+	"""
+
 	objects = PresenceManager()
 
 	class Meta:
