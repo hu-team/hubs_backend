@@ -9,4 +9,4 @@ class AbsenceReportSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = AbsenceReport
-		field = ('id', 'student', 'report_from', 'report_until', 'type', 'reason')
+		fields = ('id', 'student', 'report_from', 'report_until', 'type', 'reason')
