@@ -10,6 +10,7 @@ router.register(r'lessons', views.LessonViewSet)
 router.register(r'groups', views.GroupViewSet, base_name='groups')
 router.register(r'presences', views.PresenceViewSet, base_name='presences-detail')
 router.register(r'courses', views.CourseViewSet, base_name='courses')
+router.register(r'results', views.ResultViewSet, base_name='results')
 
 schema_view = get_schema_view(title='Hubs API')
 
