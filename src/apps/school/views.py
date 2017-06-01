@@ -59,6 +59,10 @@ class ResultViewSet(viewsets.ModelViewSet):
 	queryset = Result.objects.all().prefetch_related('course', 'course__teachers').select_related('student')
 	serializer_class = serializers.ResultSerializer
 
+	@cache_response(60 * 15)
+	def list(self, request, *args, **kwargs):
+		return super().list(request, *args, **kwargs)
+
 
 class PresenceViewSet(viewsets.ModelViewSet):
 	permission_classes = [IsAuthenticated]
