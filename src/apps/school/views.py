@@ -56,7 +56,7 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 class ResultViewSet(viewsets.ModelViewSet):
 	permission_classes = [IsAuthenticated]
 	model = Result
-	queryset = Result.objects.all().prefetch_related('course', 'student')
+	queryset = Result.objects.all().prefetch_related('course', 'course__teachers').select_related('student')
 	serializer_class = serializers.ResultSerializer
 
 
