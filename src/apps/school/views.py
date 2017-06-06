@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_extensions.cache.decorators import cache_response
 
 from apps.absence.models import AbsenceReport
-from apps.school.models import Lesson, Group, Presence, Course
+from apps.school.models import Lesson, Group, Presence, Course, Result
 from apps.school import serializers
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -51,6 +51,17 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 	model = Group
 	queryset = Group.objects.all().prefetch_related('students')
 	serializer_class = serializers.GroupSerializer
+
+
+class ResultViewSet(viewsets.ModelViewSet):
+	permission_classes = [IsAuthenticated]
+	model = Result
+	queryset = Result.objects.all().prefetch_related('course', 'course__teachers').select_related('student')
+	serializer_class = serializers.ResultSerializer
+
+	@cache_response(60 * 15)
+	def list(self, request, *args, **kwargs):
+		return super().list(request, *args, **kwargs)
 
 
 class PresenceViewSet(viewsets.ModelViewSet):
