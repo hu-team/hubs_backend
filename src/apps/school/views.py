@@ -58,6 +58,8 @@ class ResultViewSet(viewsets.ModelViewSet):
 	model = Result
 	queryset = Result.objects.all().prefetch_related('course', 'course__teachers').select_related('student')
 	serializer_class = serializers.ResultSerializer
+	filter_backends = (DjangoFilterBackend,)
+	filter_fields = ('student',)
 
 	@cache_response(60 * 15)
 	def list(self, request, *args, **kwargs):
