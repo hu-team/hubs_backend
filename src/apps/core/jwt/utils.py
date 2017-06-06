@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 from rest_framework_jwt.compat import get_username_field, get_username
 from rest_framework_jwt.settings import api_settings
 
-from apps.core.serializers import UserSerializer
+from apps.core.serializers import UserApiSerializer
 from apps.school.models import Teacher, Student
 
 
@@ -109,7 +109,7 @@ def jwt_response_payload_handler(token, payload=None, request=None):
 
 	return {
 		'token': token,
-		'user': UserSerializer(user, context={'request': request}).data,
+		'user': UserApiSerializer(user, context={'request': request}).data,
 	}
 
 
