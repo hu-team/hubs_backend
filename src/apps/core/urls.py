@@ -14,5 +14,6 @@ urlpatterns = [
 	url(r'auth/obtain', obtain_jwt_token),
 	url(r'auth/refresh', refresh_jwt_token),
 	url(r'auth/verify', verify_jwt_token),
+	url(r'email', views.EmailView.as_view()),
 	url(r'', include(router.urls)),
 ]

@@ -87,3 +87,13 @@ class TeacherSerializer(serializers.ModelSerializer):
 			return 'counselor'
 		else:
 			return 'teacher'
+
+class MailSerializer(serializers.Serializer):
+	subject = serializers.CharField(max_length=50)
+	message = serializers.CharField(max_length=500)
+	to_email = serializers.EmailField()
+
+	class Meta:
+		fields = (
+			'subject', 'message', 'to_email',
+		)
