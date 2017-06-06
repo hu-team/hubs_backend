@@ -62,11 +62,12 @@ class TeacherSerializer(serializers.ModelSerializer):
 	username = serializers.SerializerMethodField()
 	email = serializers.SerializerMethodField()
 	user_type = serializers.SerializerMethodField()
+	students = StudentSerializer(read_only=True, many=True)
 
 	class Meta:
 		model = Teacher
 		fields = (
-			'id', 'first_name', 'last_name', 'username', 'email', 'user_type',
+			'id', 'first_name', 'last_name', 'username', 'email', 'user_type', 'students'
 		)
 
 	def get_first_name(self, obj):

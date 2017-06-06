@@ -39,6 +39,8 @@ class Student(Person):
 	Date that the student joined the school.
 	"""
 
+	counselor = models.ForeignKey('Teacher', related_name='students', null=True, default=None)
+
 
 class Teacher(Person):
 	is_counselor = models.BooleanField(default=False)
