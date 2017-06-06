@@ -42,3 +42,6 @@ def show_toolbar(request):
 DEBUG_TOOLBAR_CONFIG = {
 	'SHOW_TOOLBAR_CALLBACK': 'config.settings.docker.show_toolbar',
 }
+
+
+BROKER_URL = 'amqp://guest:guest@rabbitmq:5672//'

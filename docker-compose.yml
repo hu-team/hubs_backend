@@ -9,11 +9,29 @@ services:
       - '8000'
     links:
       - mysql
+      - rabbitmq
     depends_on:
       - mysql
+      - rabbitmq
     env_file: .env
     environment:
       DJANGO_DOCKER: 1
+      DJANGO_IS_CELERY: 0
+  worker:
+    build: .
+    restart: always
+    volumes:
+      - '.:/app'
+    links:
+      - mysql
+      - rabbitmq
+    depends_on:
+      - mysql
+      - rabbitmq
+    env_file: .env
+    environment:
+      DJANGO_DOCKER: 1
+      DJANGO_IS_CELERY: 1
   redis:
     image: 'redis:latest'
     volumes:
@@ -46,3 +64,5 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: hubs
       MYSQL_DATABASE: hubs
+  rabbitmq:
+    image: rabbitmq

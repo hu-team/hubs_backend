@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 	'rest_framework_swagger',
 	'django_filters',
 	'avatar',
+	'django_celery_results',
 
 	'apps.core.apps.CoreConfig',
 	'apps.school.apps.SchoolConfig',
@@ -201,3 +202,5 @@ REST_FRAMEWORK = {
 	'DEFAULT_CACHE_RESPONSE_TIMEOUT': 5 * 60,  # 5 Minutes.
 	'PAGE_SIZE': 100,
 }
+
+BROKER_URL = 'amqp://guest:guest@rabbitmq:5672//'
