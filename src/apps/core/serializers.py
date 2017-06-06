@@ -18,7 +18,7 @@ class UserApiSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = User
 		fields = (
-			'first_name', 'last_name', 'username', 'email', 'user_type',
+			'id', 'first_name', 'last_name', 'username', 'email', 'user_type',
 		)
 
 	def get_user_type(self, obj):
