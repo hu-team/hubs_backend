@@ -20,12 +20,7 @@ python3 manage.py migrate --noinput
 if [ "$DJANGO_IS_CELERY" = "1" ]
 then
     # Start celery worker.
-    if [ "$DJANGO_IS_DEBUG" = "0" ]
-    then
-        celery -A celeryApp worker -B --autoreload -l info $@
-    else
-        celery -A celeryApp worker -B -l info $@
-    fi
+    celery -A celeryApp worker -B -l info $@
 else
     # Collect static files.
     python3 manage.py collectstatic --noinput
