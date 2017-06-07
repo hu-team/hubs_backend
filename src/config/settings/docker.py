@@ -43,5 +43,11 @@ DEBUG_TOOLBAR_CONFIG = {
 	'SHOW_TOOLBAR_CALLBACK': 'config.settings.docker.show_toolbar',
 }
 
-
+# Celery options
 BROKER_URL = 'amqp://guest:guest@rabbitmq:5672//'
+
+
+# Mail to MailDev
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'maildev'
+EMAIL_PORT = 25

@@ -18,7 +18,10 @@ DATA_DIR = os.path.join(os.path.dirname(BASE_DIR), 'data')
 
 DEBUG = bool(int(os.getenv('DJANGO_IS_DEBUG', True)))
 
-from config.settings import local
+try:
+	from config.settings import local
+except ImportError:
+	local = object()
 try:
 	os.makedirs(TMP_DIR)
 	os.makedirs(CACHE_DIR)

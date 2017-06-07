@@ -10,9 +10,11 @@ services:
     links:
       - mysql
       - rabbitmq
+      - maildev
     depends_on:
       - mysql
       - rabbitmq
+      - maildev
     env_file: .env
     environment:
       DJANGO_DOCKER: 1
@@ -25,9 +27,11 @@ services:
     links:
       - mysql
       - rabbitmq
+      - maildev
     depends_on:
       - mysql
       - rabbitmq
+      - maildev
     env_file: .env
     environment:
       DJANGO_DOCKER: 1
@@ -47,6 +51,7 @@ services:
       - './src/config/nginx:/etc/nginx/conf.d'
     links:
       - web
+      - maildev
     depends_on:
       - web
   mysql:
@@ -66,3 +71,6 @@ services:
       MYSQL_DATABASE: hubs
   rabbitmq:
     image: rabbitmq
+  maildev:
+    image: djfarrelly/maildev
+    command: bin/maildev --web 80 --smtp 25 --base-pathname /maildev --web-user admin --web-pass Welkom01
