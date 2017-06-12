@@ -61,7 +61,6 @@ class StudentSerializer(serializers.ModelSerializer):
 	last_name = serializers.SerializerMethodField()
 	username = serializers.SerializerMethodField()
 	email = serializers.SerializerMethodField()
-	graduated = serializers.SerializerMethodField()
 	counselor = CounselorSerializer(read_only=True)
 
 	class Meta:
@@ -81,6 +80,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
 	def get_email(self, obj):
 		return obj.user.email
+
 
 
 class TeacherSerializer(serializers.ModelSerializer):
