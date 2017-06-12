@@ -66,11 +66,14 @@ class Command(BaseCommand):
 			courses = list()
 			groups = list()
 			for years_back, (year, year_start, year_end) in enumerate(reversed(school_years)):
+				period = random.choice(Course.PERIOD_CHOICES)
+
 				course = Course.objects.create(
 					code='{}-{}'.format(self.get_random_str(3).upper(), self.get_random_str(6).upper()),
 					school_year=year,
 					name='Course \'{}\''.format(self.get_fake().job()),
 					ec_points=5, number_essays=2, number_resits=1,
+					period=period,
 				)
 				course.teachers = teachers+slbers
 				course.save()
@@ -125,7 +128,7 @@ class Command(BaseCommand):
 							Result.objects.create(
 								course=course, student=student, ec_points=ec_points,
 								ladder_grade=ladder_grade, number_grade=number_grade,
-								created_at=result_date
+								created_at=result_date,
 							)
 
 							if ec_points == 0:

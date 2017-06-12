@@ -207,3 +207,14 @@ REST_FRAMEWORK = {
 }
 
 BROKER_URL = 'amqp://guest:guest@rabbitmq:5672//'
+
+
+NOTEBOOK_ARGUMENTS = [
+	# exposes IP and port
+	'--ip=0.0.0.0',
+	'--port=9999',
+	# disables the browser
+	'--no-browser',
+
+	'--allow-root',
+]

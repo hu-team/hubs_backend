@@ -29,3 +29,6 @@ Pillow==4.1.1
 Faker==0.7.12
 
 gunicorn
+
+ipython
+jupyter

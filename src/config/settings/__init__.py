@@ -2,6 +2,7 @@ from datetime import timedelta
 
 import os
 import pymysql
+from celery.schedules import crontab
 
 pymysql.install_as_MySQLdb()
 
@@ -23,6 +24,10 @@ CELERYBEAT_SCHEDULE = {
 	'debug-check': {
 		'task': 'apps.core.tasks.check_debug',
 		'schedule': timedelta(minutes=5),
+	},
+	'daily-index-calculation': {
+		'task': 'apps.school.tasks.daily_process_student_progress_index',
+		'schedule': crontab(hour='1', minute='0'),
 	},
 }
 

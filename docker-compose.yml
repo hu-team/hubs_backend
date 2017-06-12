@@ -7,6 +7,8 @@ services:
       - '.:/app'
     expose:
       - '8000'
+    ports:
+      - '9999:9999'
     links:
       - mysql
       - rabbitmq

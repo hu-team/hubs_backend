@@ -15,13 +15,17 @@ do
   sleep 5
 done
 
-python3 manage.py migrate --noinput
-
 if [ "$DJANGO_IS_CELERY" = "1" ]
 then
+    # Let the app run migrations first.
+    sleep 10
+
     # Start celery worker.
     celery -A celeryApp worker -B -l info $@
 else
+    # Execute migrations
+    python3 manage.py migrate --noinput
+
     # Collect static files.
     python3 manage.py collectstatic --noinput
 

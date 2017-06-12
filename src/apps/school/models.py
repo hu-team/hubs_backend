@@ -43,8 +43,21 @@ class Student(Person):
 
 
 class StudentProgressIndexPoint(SimpleModel):
+	PERIOD_A = 'A'
+	PERIOD_B = 'B'
+	PERIOD_C = 'C'
+	PERIOD_D = 'D'
+	PERIOD_E = 'E'
+	PERIOD_CHOICES = (
+		(PERIOD_A, 'A'),
+		(PERIOD_B, 'B'),
+		(PERIOD_C, 'C'),
+		(PERIOD_D, 'D'),
+		(PERIOD_E, 'E'),
+	)
+
 	student = models.ForeignKey(Student, related_name='progress_indexes', db_index=True)
-	month = models.DateField(db_index=True)
+	period = models.CharField(db_index=True, max_length=10, choices=PERIOD_CHOICES)
 
 	complete = models.BooleanField(default=False)
 	"""
@@ -62,7 +75,7 @@ class StudentProgressIndexPoint(SimpleModel):
 	"""
 
 	class Meta:
-		unique_together = ('student', 'month')
+		unique_together = ('student', 'period')
 
 
 class Teacher(Person):
@@ -81,6 +94,19 @@ class Counselor(Teacher):
 
 
 class Course(BaseModel):
+	PERIOD_A = 'A'
+	PERIOD_B = 'B'
+	PERIOD_C = 'C'
+	PERIOD_D = 'D'
+	PERIOD_E = 'E'
+	PERIOD_CHOICES = (
+		(PERIOD_A, 'A'),
+		(PERIOD_B, 'B'),
+		(PERIOD_C, 'C'),
+		(PERIOD_D, 'D'),
+		(PERIOD_E, 'E'),
+	)
+
 	code = models.CharField(
 		null=False,
 		max_length=100,
@@ -97,6 +123,11 @@ class Course(BaseModel):
 	)
 	"""
 	Year of given course.
+	"""
+
+	period = models.CharField(max_length=10, choices=PERIOD_CHOICES, default=None, null=True)
+	"""
+	Period of given course in the year.
 	"""
 
 	name = models.CharField(
