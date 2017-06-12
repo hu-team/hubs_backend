@@ -33,6 +33,8 @@ class Command(BaseCommand):
 	help = 'Insert sample data (generated / predefined) into the current database.'
 
 	def __init__(self, *args, **kwargs):
+		self.student_id = 1000001
+
 		super().__init__(*args, **kwargs)
 
 	def get_fake(self):
@@ -82,7 +84,7 @@ class Command(BaseCommand):
 				# Generate groups
 				for gpidx in range(3):
 					# Generate students.
-					students = list(self.generate_students(24, years_back=years_back))
+					students = list(self.generate_students(24, years_back=years_back, slbers=slbers))
 
 					# Create group.
 					group = Group.objects.create(
@@ -189,17 +191,27 @@ class Command(BaseCommand):
 				is_counselor=True,
 			)
 
-	def generate_students(self, num, years_back=None):
+	def generate_students(self, num, years_back=None, slbers=None):
 		for i in range(0, num):
 			fake = self.get_fake()
 			user = self.generate_user(fake)
+
+			student_number = self.student_id
+			self.student_id += 1
+
+			counselor = None
+			if slbers:
+				counselor = random.choice(slbers)
+
 			if years_back is None:
 				join_date = fake.date_time_between(start_date='-5y', end_date='now', tzinfo=utc)
 			else:
 				join_date = datetime.datetime(year=timezone.now().year - years_back, month=7, day=1, tzinfo=utc)
 			yield Student.objects.create(
 				user=user,
-				joined_at=join_date
+				joined_at=join_date,
+				counselor=counselor,
+				student_number=student_number,
 			)
 
 	def generate_courses(self, num):
