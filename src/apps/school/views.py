@@ -41,7 +41,7 @@ class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 	@cache_response(60 * 15)
 	def list(self, request, *args, **kwargs):
 		return super().list(request, *args, **kwargs)
-	
+
 
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [IsAuthenticated]
@@ -68,6 +68,14 @@ class ResultViewSet(viewsets.ModelViewSet):
 	serializer_class = serializers.ResultSerializer
 	filter_backends = (DjangoFilterBackend,)
 	filter_fields = ('student',)
+
+	def get_queryset(self):
+		queryset = super().get_queryset()
+
+		if self.request.user.is_student:
+			queryset = queryset.filter(student=self.request.user.person_student)
+
+		return queryset
 
 	@cache_response(60 * 15)
 	def list(self, request, *args, **kwargs):
