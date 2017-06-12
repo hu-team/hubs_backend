@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.core.models import BaseModel, User
+from apps.core.models import BaseModel, User, SimpleModel
 from apps.school.utils import validate_school_year
 
 
@@ -40,6 +40,29 @@ class Student(Person):
 	"""
 
 	counselor = models.ForeignKey('Teacher', related_name='students', null=True, default=None)
+
+
+class StudentProgressIndexPoint(SimpleModel):
+	student = models.ForeignKey(Student, related_name='progress_indexes', db_index=True)
+	month = models.DateField(db_index=True)
+
+	complete = models.BooleanField(default=False)
+	"""
+	Was the month complete and did we had enough data to calculate the index?
+	"""
+
+	index = models.FloatField(null=True, default=None)
+	"""
+	The outcome of the calculation
+	"""
+
+	triggered = models.BooleanField(default=False)
+	"""
+	Did we trigger the caution signal for the counselor with this month?
+	"""
+
+	class Meta:
+		unique_together = ('student', 'month')
 
 
 class Teacher(Person):

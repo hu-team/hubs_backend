@@ -19,6 +19,9 @@ class BaseModel(models.Model):
 		abstract = True
 
 
+SimpleModel = models.Model
+
+
 class User(AbstractUser):
 	# Override to increase max_length.
 	first_name = models.CharField(_('first name'), max_length=150, blank=True)

@@ -32,6 +32,8 @@ else
        /usr/local/bin/gunicorn config.wsgi -w 6 -b 0.0.0.0:8000 --chdir=/app/src $@
     else
        echo "Starting development server..."
-       python3 manage.py runserver_plus 0.0.0.0:8000 $@
+       while true; do
+          python3 manage.py runserver_plus 0.0.0.0:8000 $@
+       done
     fi
 fi
