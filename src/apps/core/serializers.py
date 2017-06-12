@@ -66,7 +66,7 @@ class StudentSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Student
 		fields = (
-			'id', 'first_name', 'last_name', 'username', 'email', 'student_number', 'counselor'
+			'id', 'first_name', 'last_name', 'username', 'email', 'student_number','graduated' , 'counselor'
 		)
 
 	def get_first_name(self, obj):
@@ -80,6 +80,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
 	def get_email(self, obj):
 		return obj.user.email
+
 
 
 class TeacherSerializer(serializers.ModelSerializer):

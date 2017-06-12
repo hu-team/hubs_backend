@@ -40,7 +40,14 @@ class Student(Person):
 	"""
 
 	counselor = models.ForeignKey('Teacher', related_name='students', null=True, default=None)
+	"""
+	The counselor of the student.
+	"""
 
+	graduated = models.BooleanField(default=False)
+	"""
+	Wether gruadated or not.
+	"""
 
 class StudentProgressIndexPoint(SimpleModel):
 	PERIOD_A = 'A'
