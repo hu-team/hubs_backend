@@ -1,12 +1,12 @@
 from rest_framework import serializers
 
-from apps.core.serializers import StudentSerializer, TeacherSerializer
+from apps.core.serializers import StudentSerializer, TeacherSerializer, TeacherWithoutStudentSerializer
 from apps.school.models import Lesson, Group, Presence, Course, Result
 import random
 
 
 class CourseSerializer(serializers.ModelSerializer):
-	teachers = TeacherSerializer(many=True, read_only=True)
+	teachers = TeacherWithoutStudentSerializer(many=True, read_only=True)
 
 	class Meta:
 		model = Course
