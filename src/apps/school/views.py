@@ -16,11 +16,15 @@ from django_filters.rest_framework import DjangoFilterBackend
 class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [IsAuthenticated]
 	model = Lesson
-	queryset = Lesson.objects.all().prefetch_related('teacher', 'course', 'group', 'group__students')
-	serializer_class = serializers.LessonSerializer
+	queryset = Lesson.objects.all().select_related('teacher', 'course', 'group').prefetch_related('group__students')
 	filter_backends = (DjangoFilterBackend,)
 	filter_fields = ('course', 'group', 'teacher', 'id')
 	ordering_fields = ('start', 'end')
+
+	def get_serializer_class(self):
+		if self.action == 'list':
+			return serializers.LessonSerializerLittle
+		return serializers.LessonSerializer
 
 	def get_queryset(self):
 		queryset = super().get_queryset()
@@ -34,6 +38,10 @@ class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 		queryset = queryset.order_by('end')
 		return queryset.filter(end__gte=filter_from)
 
+	@cache_response(60 * 15)
+	def list(self, request, *args, **kwargs):
+		return super().list(request, *args, **kwargs)
+	
 
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [IsAuthenticated]

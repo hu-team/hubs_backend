@@ -52,6 +52,21 @@ class LessonSerializer(serializers.ModelSerializer):
 		)
 
 
+class LessonSerializerLittle(serializers.ModelSerializer):
+	room = serializers.SerializerMethodField()
+	def get_room(self, obj):
+		rooms = ['2.133', '0.053', '1.862', '3.153', '4.830']
+		building_names = ['PL99', 'PL101', 'DL200', 'DL500']
+
+		return random.choice(building_names) + '-' + random.choice(rooms)
+
+	class Meta:
+		model = Lesson
+		fields = (
+			'id', 'course', 'ignore_absence', 'start', 'end', 'room'
+		)
+
+
 class PresenceSerializer(serializers.ModelSerializer):
 	present = serializers.BooleanField(default=False)
 	# TODO: Use nested serializer.
