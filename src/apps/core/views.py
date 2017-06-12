@@ -20,7 +20,7 @@ class StudentViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [IsAuthenticated]
 	model = Student
 	queryset = Student.objects.all().select_related('user')
-	serializer_class = serializers.StudentSerializer
+	serializer_class = serializers.StudentSerializerWithCounselor
 
 
 class TeacherViewSet(viewsets.ReadOnlyModelViewSet):
