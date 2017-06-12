@@ -14,12 +14,25 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserApiSerializer(serializers.ModelSerializer):
 	user_type = serializers.SerializerMethodField()
+	student_id = serializers.SerializerMethodField()
+	teacher_id = serializers.SerializerMethodField()
 
 	class Meta:
 		model = User
 		fields = (
 			'id', 'first_name', 'last_name', 'username', 'email', 'user_type',
+			'student_id', 'teacher_id'
 		)
+
+	def get_student_id(self, obj):
+		if obj.is_student:
+			return obj.person.pk
+		return None
+
+	def get_teacher_id(self, obj):
+		if obj.is_teacher:
+			return obj.person.pk
+		return None
 
 	def get_user_type(self, obj):
 		if obj.is_counselor:
