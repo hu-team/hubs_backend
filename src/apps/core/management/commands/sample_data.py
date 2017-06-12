@@ -66,7 +66,7 @@ class Command(BaseCommand):
 			courses = list()
 			groups = list()
 			for years_back, (year, year_start, year_end) in enumerate(reversed(school_years)):
-				period = random.choice(Course.PERIOD_CHOICES)
+				period = random.choice(Course.PERIOD_CHOICES)[0]
 
 				course = Course.objects.create(
 					code='{}-{}'.format(self.get_random_str(3).upper(), self.get_random_str(6).upper()),

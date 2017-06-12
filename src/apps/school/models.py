@@ -49,6 +49,7 @@ class Student(Person):
 	Wether gruadated or not.
 	"""
 
+
 class StudentProgressIndexPoint(SimpleModel):
 	PERIOD_A = 'A'
 	PERIOD_B = 'B'
@@ -93,6 +94,7 @@ class Teacher(Person):
 class Counselor(Teacher):
 	"""
 	DONT USE THIS MODEL!
+	Deprecated
 	"""
 
 	class Meta:
