@@ -61,12 +61,13 @@ class StudentSerializer(serializers.ModelSerializer):
 	last_name = serializers.SerializerMethodField()
 	username = serializers.SerializerMethodField()
 	email = serializers.SerializerMethodField()
+	graduated = serializers.SerializerMethodField()
 	counselor = CounselorSerializer(read_only=True)
 
 	class Meta:
 		model = Student
 		fields = (
-			'id', 'first_name', 'last_name', 'username', 'email', 'student_number', 'counselor'
+			'id', 'first_name', 'last_name', 'username', 'email', 'student_number','graduated' , 'counselor'
 		)
 
 	def get_first_name(self, obj):
