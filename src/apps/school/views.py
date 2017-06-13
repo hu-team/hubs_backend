@@ -60,6 +60,14 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 	queryset = Group.objects.all().prefetch_related('students')
 	serializer_class = serializers.GroupSerializer
 
+	def get_queryset(self):
+		queryset = super().get_queryset()
+
+		if self.request.user.is_student:
+			queryset = queryset.filter(students=self.request.user.person_student)
+
+		return queryset
+
 
 class ResultViewSet(viewsets.ModelViewSet):
 	permission_classes = [IsAuthenticated]
