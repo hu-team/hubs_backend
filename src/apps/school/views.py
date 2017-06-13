@@ -98,8 +98,16 @@ class PresenceViewSet(viewsets.ModelViewSet):
 	filter_backends = (DjangoFilterBackend,)
 	filter_fields = ('lesson',)
 
+	def get_queryset(self):
+		queryset = super().get_queryset()
+
+		if self.request.user.is_student:
+			queryset = queryset.filter(student=self.request.user.person_student)
+
+		return queryset
+
 	def list(self, request, *args, **kwargs):
-		if 'lesson' in request.GET and 'prefill' in request.GET and request.GET['prefill']:
+		if not self.request.user.is_student and 'lesson' in request.GET and 'prefill' in request.GET and request.GET['prefill']:
 			try:
 				lesson = Lesson.objects.select_related('group').prefetch_related('group__students').get(pk=request.GET['lesson'])
 				lesson.prefill()
@@ -107,5 +115,4 @@ class PresenceViewSet(viewsets.ModelViewSet):
 				logging.exception(e)
 				pass
 
-		# if self.request.query_params.get
 		return super().list(request, *args, **kwargs)
