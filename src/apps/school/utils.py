@@ -59,6 +59,8 @@ def calculate_index(student, course, group, results):
 		if presence.present or lesson.ignore_absence:
 			total_lessons_present += 1
 			total_hours_present += lesson_hours
+		elif not presence.present and presence.absence_report is not None and lesson_hours > 0:
+			total_hours_present += lesson_hours / 2
 		total_lessons += 1
 		total_hours += lesson_hours
 
