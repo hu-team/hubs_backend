@@ -98,6 +98,14 @@ class PresenceViewSet(viewsets.ModelViewSet):
 	filter_backends = (DjangoFilterBackend,)
 	filter_fields = ('lesson',)
 
+	def get_queryset(self):
+		queryset = super().get_queryset()
+
+		if self.request.user.is_student:
+			queryset = queryset.filter(student=self.request.user.person_student)
+
+		return queryset
+
 	def prefill(self, lesson):
 		"""
 		:param lesson: Lesson instance
