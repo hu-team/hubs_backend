@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('code', models.CharField(max_length=100)),
-                ('school_year', models.CharField(help_text='School year in 2016-2017 format.', max_length=9, validators=[apps.school.utils.validate_school_year])),
+                ('school_year', models.CharField(help_text='School year in 2016-2017 format.', max_length=9, validators=[apps.school.validations.validate_school_year])),
                 ('name', models.CharField(blank=True, default=None, max_length=250, null=True)),
                 ('ec_points', models.PositiveIntegerField(help_text='EC Points that the student can get.')),
                 ('number_essays', models.PositiveIntegerField(help_text='Number of essays and thus results the student can get on this course.')),
@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('code', models.CharField(help_text='Student class code.', max_length=50)),
-                ('school_year', models.CharField(help_text='School year in 2016-2017 format.', max_length=9, validators=[apps.school.utils.validate_school_year])),
+                ('school_year', models.CharField(help_text='School year in 2016-2017 format.', max_length=9, validators=[apps.school.validations.validate_school_year])),
             ],
         ),
         migrations.CreateModel(

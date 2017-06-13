@@ -151,5 +151,4 @@ fabric.properties
 
 /mysql
 
-*.ipynb
-*.ipynb_checkpoints
+.ipynb_checkpoints

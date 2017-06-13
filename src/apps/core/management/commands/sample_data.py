@@ -142,7 +142,6 @@ class Command(BaseCommand):
 									created_at=result_date + datetime.timedelta(days=4)
 								)
 
-
 					# Generate lessons (for each days (some randomized stuff)).
 					for single_day in daterange(year_start, year_end):
 						# Check if between the lesson months.
@@ -173,6 +172,15 @@ class Command(BaseCommand):
 							end=end,
 							ignore_absence=bool(random.getrandbits(1) and random.getrandbits(1))
 						)
+
+						# Generate presence for lessons at least one year ago.
+						if lesson.start <= (timezone.now() - relativedelta(years=1)):
+							lesson.prefill()
+
+							# Randomize the presence status.
+							for presence in lesson.presence_set.all():
+								presence.present = bool(random.randrange(100) < 90)  # 90 percentage chance of present.
+								presence.save()
 
 	def generate_teachers(self, num):
 		for i in range(0, num):

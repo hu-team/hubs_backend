@@ -1,7 +1,12 @@
+from dateutil.relativedelta import relativedelta
+from django.apps import apps
 from django.db import models
+from django.db.models import Q
+from django.utils.timezone import now
 
 from apps.core.models import BaseModel, User, SimpleModel
-from apps.school.utils import validate_school_year
+from apps.school.utils import years_ago
+from apps.school.validations import validate_school_year
 
 
 class PersonManager(models.Manager):
@@ -49,6 +54,11 @@ class Student(Person):
 	Wether gruadated or not.
 	"""
 
+	def get_num_years(self, end=None):
+		if end is None:
+			end = now()
+		return int((end - self.joined_at).days / 365.25)
+
 
 class StudentProgressIndexPoint(SimpleModel):
 	PERIOD_A = 'A'
@@ -62,6 +72,17 @@ class StudentProgressIndexPoint(SimpleModel):
 		(PERIOD_C, 'C'),
 		(PERIOD_D, 'D'),
 		(PERIOD_E, 'E'),
+	)
+
+	TRIGGER_REASON_PRESENCE = 'presence'
+	TRIGGER_REASON_GRADE = 'grade'
+	TRIGGER_REASON_MIXED = 'mixed'
+	TRIGGER_REASON_OTHER = 'other'
+	TRIGGER_REASON_CHOICES = (
+		(TRIGGER_REASON_PRESENCE, 'Presence'),
+		(TRIGGER_REASON_GRADE, 'Grade'),
+		(TRIGGER_REASON_MIXED, 'Mixed (Presence and grade)'),
+		(TRIGGER_REASON_OTHER, 'Other'),
 	)
 
 	student = models.ForeignKey(Student, related_name='progress_indexes', db_index=True)
@@ -82,8 +103,16 @@ class StudentProgressIndexPoint(SimpleModel):
 	Did we trigger the caution signal for the counselor with this month?
 	"""
 
+	triggered_reason = models.CharField(null=True, default=None, choices=TRIGGER_REASON_CHOICES, max_length=50)
+	"""
+	The reason of the triggered event.
+	"""
+
 	class Meta:
 		unique_together = ('student', 'period')
+
+	def __str__(self):
+		return 'IndexPoint ({}): {}, index={}, trigger={}'.format(self.period, self.student, self.index, self.triggered)
 
 
 class Teacher(Person):
@@ -270,6 +299,25 @@ class Lesson(BaseModel):
 	def __str__(self):
 		return '{}: from {} until {}'.format(str(self.course), self.start, self.end)
 
+	def prefill(self):
+		for student in self.group.students.all():
+			absence_report_model = apps.get_model('absence', 'AbsenceReport')
+			report = absence_report_model.objects.filter(
+				Q(student=student) & Q(report_from__lte=self.start) & Q(
+					Q(report_until__isnull=True) | Q(report_until__gte=self.start)
+				)
+			).first()
+
+			Presence.objects.get_or_create(
+				lesson=self,
+				student=student,
+				teacher=None,
+				defaults=dict(
+					absence_report=report,
+					present=False
+				)
+			)
+
 
 class Result(BaseModel):
 	LADDER_NT = 0
@@ -344,11 +392,27 @@ class Presence(BaseModel):
 		Lesson,
 		db_index=True
 	)
+	"""
+	Lesson
+	"""
 
 	student = models.ForeignKey(
 		Student,
 		db_index=True
 	)
+	"""
+	Student
+	"""
+
+	teacher = models.ForeignKey(
+		Teacher,
+		null=True,
+		default=None,
+		db_index=True
+	)
+	"""
+	What teacher set the presence
+	"""
 
 	present = models.BooleanField(
 		null=False,

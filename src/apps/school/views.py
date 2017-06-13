@@ -98,32 +98,11 @@ class PresenceViewSet(viewsets.ModelViewSet):
 	filter_backends = (DjangoFilterBackend,)
 	filter_fields = ('lesson',)
 
-	def prefill(self, lesson):
-		"""
-		:param lesson: Lesson instance
-		:type lesson: apps.school.models.Lesson
-		"""
-		for student in lesson.group.students.all():
-			report = AbsenceReport.objects.filter(
-				Q(student=student) & Q(report_from__lte=lesson.start) & Q(
-					Q(report_until__isnull=True) | Q(report_until__gte=lesson.start)
-				)
-			).first()
-
-			Presence.objects.get_or_create(
-				lesson=lesson,
-				student=student,
-				defaults=dict(
-					absence_report=report,
-					present=False
-				)
-			)
-
 	def list(self, request, *args, **kwargs):
 		if 'lesson' in request.GET and 'prefill' in request.GET and request.GET['prefill']:
 			try:
 				lesson = Lesson.objects.select_related('group').prefetch_related('group__students').get(pk=request.GET['lesson'])
-				self.prefill(lesson)
+				lesson.prefill()
 			except Exception as e:
 				logging.exception(e)
 				pass
