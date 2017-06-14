@@ -2,7 +2,6 @@ version: '3.2'
 services:
   web:
     build: .
-    restart: always
     volumes:
       - '.:/app'
     expose:
@@ -10,11 +9,11 @@ services:
     ports:
       - '9999:9999'
     links:
-      - mysql
+#      - mysql
       - rabbitmq
       - maildev
     depends_on:
-      - mysql
+#      - mysql
       - rabbitmq
       - maildev
     env_file: .env
@@ -23,7 +22,6 @@ services:
       DJANGO_IS_CELERY: 0
   worker:
     build: .
-    restart: always
     volumes:
       - '.:/app'
     links:

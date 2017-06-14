@@ -1,17 +1,31 @@
 #!/bin/sh
 cd /app/src
 
+c=0
 until nc -z -v -w30 mysql 3306
 do
   echo "Waiting for database connection..."
   # wait for 5 seconds before check again
+  c=$(($c+1))
+  if [ "$c" -eq 10 ]
+  then
+    exit 0
+  fi
+
   sleep 5
 done
 
+c=0
 until nc -z -v -w30 rabbitmq 5672
 do
   echo "Waiting for broker connection..."
   # wait for 5 seconds before check again
+  c=$(($c+1))
+  if [ "$c" -eq 10 ]
+  then
+    exit 0
+  fi
+
   sleep 5
 done
 
