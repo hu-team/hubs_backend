@@ -203,6 +203,7 @@ REST_FRAMEWORK = {
 	),
 	'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
 	'DEFAULT_CACHE_RESPONSE_TIMEOUT': 5 * 60,  # 5 Minutes.
+	'DEFAULT_CACHE_KEY_FUNC': 'apps.core.cache.cache_key_func',
 	'PAGE_SIZE': 100,
 }
 
