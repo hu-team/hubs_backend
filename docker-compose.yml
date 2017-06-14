@@ -9,11 +9,11 @@ services:
     ports:
       - '9999:9999'
     links:
-#      - mysql
+      - mysql
       - rabbitmq
       - maildev
     depends_on:
-#      - mysql
+      - mysql
       - rabbitmq
       - maildev
     env_file: .env
