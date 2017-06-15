@@ -12,19 +12,22 @@ from apps.school.models import Lesson, Group, Presence, Course, Result
 from apps.school import serializers
 from django_filters.rest_framework import DjangoFilterBackend
 
+from apps.school.serializers import LessonSerializer
+
 
 class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 	permission_classes = [IsAuthenticated]
 	model = Lesson
+	serializer_class = LessonSerializer
 	queryset = Lesson.objects.all().select_related('teacher', 'course', 'group').prefetch_related('group__students')
 	filter_backends = (DjangoFilterBackend,)
 	filter_fields = ('course', 'group', 'teacher', 'id')
 	ordering_fields = ('start', 'end')
 
-	def get_serializer_class(self):
-		if self.action == 'list':
-			return serializers.LessonSerializerLittle
-		return serializers.LessonSerializer
+	# def get_serializer_class(self):
+	# 	if self.action == 'list':
+	# 		return serializers.LessonSerializerLittle
+	# 	return serializers.LessonSerializer
 
 	def get_queryset(self):
 		queryset = super().get_queryset()
