@@ -13,7 +13,7 @@ class NotificationViewSet(
 ):
 	permission_classes = [IsAuthenticated]
 	model = Notification
-	queryset = Notification.objects.all()
+	queryset = Notification.objects.all().order_by('-created_at')
 	serializer_class = serializers.NotificationSerializer
 
 	def get_queryset(self):
