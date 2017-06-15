@@ -41,7 +41,7 @@ class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 		queryset = queryset.order_by('end')
 		return queryset.filter(end__gte=filter_from)
 
-	@cache_response(60 * 15)
+	# @cache_response(60 * 15)
 	def list(self, request, *args, **kwargs):
 		return super().list(request, *args, **kwargs)
 
