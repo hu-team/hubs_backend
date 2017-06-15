@@ -13,6 +13,7 @@ urlpatterns = [
 	url(r'^core/', include('apps.core.urls', namespace='core')),
 	url(r'^school/', include('apps.school.urls', namespace='school')),
 	url(r'^absence/', include('apps.absence.urls', namespace='absence')),
+	url(r'^notifications/', include('apps.notifications.urls', namespace='notifications')),
 	url(r'^$', RedirectView.as_view(url=reverse_lazy('admin:index'))),
 	url(r'^schema/$', schema_view),
 ]

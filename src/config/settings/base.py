@@ -57,6 +57,7 @@ INSTALLED_APPS = [
 	'apps.core.apps.CoreConfig',
 	'apps.school.apps.SchoolConfig',
 	'apps.absence.apps.AbsenceConfig',
+	'apps.notifications.apps.NotificationsConfig',
 
 	'corsheaders',
 ]
