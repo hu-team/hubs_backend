@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_extensions.cache.decorators import cache_response
 
 from apps.absence.models import AbsenceReport
+from apps.core.permissions import ReadOnlyOrWriteAccess
 from apps.school.models import Lesson, Group, Presence, Course, Result
 from apps.school import serializers
 from django_filters.rest_framework import DjangoFilterBackend
@@ -16,7 +17,7 @@ from apps.school.serializers import LessonSerializer
 
 
 class LessonViewSet(viewsets.ReadOnlyModelViewSet):
-	permission_classes = [IsAuthenticated]
+	permission_classes = [ReadOnlyOrWriteAccess]
 	model = Lesson
 	serializer_class = LessonSerializer
 	queryset = Lesson.objects.all().select_related('teacher', 'course', 'group').prefetch_related('group__students')
@@ -47,7 +48,7 @@ class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
-	permission_classes = [IsAuthenticated]
+	permission_classes = [ReadOnlyOrWriteAccess]
 	model = Course
 	queryset = Course.objects.all()
 	serializer_class = serializers.CourseSerializer
@@ -58,7 +59,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
-	permission_classes = [IsAuthenticated]
+	permission_classes = [ReadOnlyOrWriteAccess]
 	model = Group
 	queryset = Group.objects.all().prefetch_related('students')
 	serializer_class = serializers.GroupSerializer
@@ -73,7 +74,7 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ResultViewSet(viewsets.ModelViewSet):
-	permission_classes = [IsAuthenticated]
+	permission_classes = [ReadOnlyOrWriteAccess]
 	model = Result
 	queryset = Result.objects.all().prefetch_related('course', 'course__teachers').select_related('student')
 	serializer_class = serializers.ResultSerializer
@@ -94,7 +95,7 @@ class ResultViewSet(viewsets.ModelViewSet):
 
 
 class PresenceViewSet(viewsets.ModelViewSet):
-	permission_classes = [IsAuthenticated]
+	permission_classes = [ReadOnlyOrWriteAccess]
 	model = Presence
 	queryset = Presence.objects.all()
 	serializer_class = serializers.PresenceSerializer
