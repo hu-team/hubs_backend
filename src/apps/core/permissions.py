@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import BasePermission, IsAuthenticated
 
 
 class BasePersonPermission(BasePermission):
@@ -21,3 +21,33 @@ class BasePersonPermission(BasePermission):
 class IsTeacher(BasePersonPermission):
 	def is_person(self, user):
 		return user.is_teacher
+
+
+class StudentNotAllowed(IsAuthenticated):
+
+	def has_permission(self, request, view):
+		if request.user.is_student:
+			return False
+		return True
+
+
+class StudentReadOnlyAndPost(IsAuthenticated):
+
+	NOT_METHODS = ['DELETE', 'PATCH', 'PUT']
+
+	def has_permission(self, request, view):
+		if request.method in self.NOT_METHODS and request.user.is_student:
+			return False
+		return True
+
+
+class ReadOnlyOrWriteAccess(IsAuthenticated):
+
+	NOT_METHODS = ['POST', 'DELETE', 'PATCH', 'PUT']
+
+	def has_permission(self, request, view):
+		if request.method in self.NOT_METHODS and request.user.is_student:
+			return False
+		return True
+
+
