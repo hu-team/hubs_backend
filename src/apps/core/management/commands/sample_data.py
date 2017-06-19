@@ -95,6 +95,7 @@ class Command(BaseCommand):
 			predef_groups.append(group_set)
 
 		for c_idx in range(num):
+			print(' ')
 			fprint('Creating course... {} out of {}...'.format(c_idx+1, num))
 			courses = list()
 			groups = list()
@@ -164,6 +165,7 @@ class Command(BaseCommand):
 									)
 
 						# Generate lessons (for each days (some randomized stuff)).
+						lessons = list()
 						for single_day in daterange(year_start, year_end):
 							# Check if between the lesson months.
 							if single_day.month == 7:
@@ -178,7 +180,6 @@ class Command(BaseCommand):
 								continue
 							# if not random.getrandbits(1):
 							# 	continue
-							print('.', end='', sep='', flush=True)
 
 							# Random start and end time.
 							start_hour = random.randint(9, 12)
@@ -188,23 +189,30 @@ class Command(BaseCommand):
 							)
 							end = start + datetime.timedelta(hours=2)
 
-							lesson = Lesson.objects.create(
+							lessons.append(Lesson(
 								course=course,
 								teacher=random.choice(teachers),
 								group=group,
 								start=start,
 								end=end,
 								ignore_absence=bool(random.getrandbits(1) and random.getrandbits(1))
-							)
+							))
 
-							# Generate presence for lessons at least one year ago.
-							if lesson.start <= (timezone.now() - relativedelta(years=1)):
-								lesson.prefill()
+						# Bulk create.
+						print('.', end='', sep='', flush=True)
+						Lesson.objects.bulk_create(lessons)
 
-								# Randomize the presence status.
-								for presence in lesson.presence_set.all():
-									presence.present = bool(random.randrange(100) < 90)  # 90 percentage chance of present.
-									presence.save()
+		print(' ')
+		fprint('Prefilling lessons...')
+		for lesson in Lesson.objects.all():
+			# Generate presence for lessons at least one year ago.
+			if lesson.start <= (timezone.now() - relativedelta(years=1)):
+				lesson.prefill()
+
+				# Randomize the presence status.
+				for presence in lesson.presence_set.all():
+					presence.present = bool(random.randrange(100) < 90)  # 90 percentage chance of present.
+					presence.save()
 
 	def generate_teachers(self, num):
 		for i in range(0, num):
@@ -271,7 +279,7 @@ class Command(BaseCommand):
 
 	def school_year_range(self, years_back):
 		now = timezone.now()
-		now += relativedelta(years=2)
+		# now += relativedelta(years=1)
 		if now.month > 6:
 			this_year = (
 				datetime.datetime(year=now.year, month=8, day=1, tzinfo=utc),
