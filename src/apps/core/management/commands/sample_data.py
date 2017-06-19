@@ -65,6 +65,11 @@ class Command(BaseCommand):
 		teachers = list(self.generate_teachers(4*num))
 		students = list(self.generate_students((24*2), years_back=None, slbers=slbers))
 
+		static_student, static_teacher, static_slber = self.generate_static()
+		students.append(static_student)
+		teachers.append(static_teacher)
+		slbers.append(static_slber)
+
 		# Generate predefined groups.
 		fprint('Creating groups...')
 		predef_groups = list()
@@ -276,6 +281,29 @@ class Command(BaseCommand):
 			except:
 				pass
 		return user
+
+	def generate_static(self):
+		counselor = Teacher.objects.create(
+			user=User.objects.create_user(
+				username='static_counselor', email='static_counselor@gmail.com', first_name='Arjan', last_name='de Man',
+			),
+			is_counselor=True
+		)
+		teacher = Teacher.objects.create(
+			user=User.objects.create_user(
+				username='static_teacher', email='static_teacher@gmail.com', first_name='Henk', last_name='de Man',
+			),
+			is_counselor=False
+		)
+		student = Student.objects.create(
+			user=User.objects.create_user(
+				username='static_student', email='static_student@gmail.com', first_name='Jan', last_name='de Man'
+			),
+			counselor=counselor,
+			joined_at=datetime.datetime(year=timezone.now().year - 4, month=7, day=1, tzinfo=utc),
+			student_number=1000000,
+		)
+		return student, teacher, counselor
 
 	def school_year_range(self, years_back):
 		now = timezone.now()
