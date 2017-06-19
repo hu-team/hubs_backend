@@ -186,6 +186,7 @@ class TeacherSerializer(serializers.ModelSerializer):
 		else:
 			return 'teacher'
 
+
 class MailSerializer(serializers.Serializer):
 	subject = serializers.CharField(max_length=50)
 	message = serializers.CharField(max_length=500)
