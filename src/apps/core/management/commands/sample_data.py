@@ -3,6 +3,7 @@ import string
 import typing
 import datetime
 
+import sys
 from dateutil.relativedelta import relativedelta
 from django.utils.timezone import utc
 from faker import Factory
@@ -115,8 +116,6 @@ class Command(BaseCommand):
 				# Generate groups
 				for group_list in predef_groups:
 					for group in group_list:
-						# Create group.
-						group.save()
 						groups.append(group)
 
 						result_date = year_start + datetime.timedelta(days=30)
@@ -174,9 +173,12 @@ class Command(BaseCommand):
 							if single_day.weekday() >= 5:
 								continue
 
-							# Randomly generate it, not every day.
-							if not random.getrandbits(1):
+							# Randomly generate it, not every day. 70% chance of skipping.
+							if not bool(random.randrange(100) < 70):
 								continue
+							# if not random.getrandbits(1):
+							# 	continue
+							print('.', end='', sep='', flush=True)
 
 							# Random start and end time.
 							start_hour = random.randint(9, 12)
