@@ -164,6 +164,7 @@ class Command(BaseCommand):
 									)
 
 						# Generate lessons (for each days (some randomized stuff)).
+						lessons = list()
 						for single_day in daterange(year_start, year_end):
 							# Check if between the lesson months.
 							if single_day.month == 7:
@@ -188,15 +189,19 @@ class Command(BaseCommand):
 							)
 							end = start + datetime.timedelta(hours=2)
 
-							lesson = Lesson.objects.create(
+							lessons.append(Lesson(
 								course=course,
 								teacher=random.choice(teachers),
 								group=group,
 								start=start,
 								end=end,
 								ignore_absence=bool(random.getrandbits(1) and random.getrandbits(1))
-							)
+							))
 
+						# Bulk create.
+						Lesson.objects.bulk_create(lessons)
+
+						for lesson in lessons:
 							# Generate presence for lessons at least one year ago.
 							if lesson.start <= (timezone.now() - relativedelta(years=1)):
 								lesson.prefill()
@@ -271,7 +276,7 @@ class Command(BaseCommand):
 
 	def school_year_range(self, years_back):
 		now = timezone.now()
-		now += relativedelta(years=2)
+		# now += relativedelta(years=1)
 		if now.month > 6:
 			this_year = (
 				datetime.datetime(year=now.year, month=8, day=1, tzinfo=utc),
