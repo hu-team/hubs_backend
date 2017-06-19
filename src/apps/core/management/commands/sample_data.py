@@ -179,7 +179,6 @@ class Command(BaseCommand):
 								continue
 							# if not random.getrandbits(1):
 							# 	continue
-							print('.', end='', sep='', flush=True)
 
 							# Random start and end time.
 							start_hour = random.randint(9, 12)
@@ -199,17 +198,19 @@ class Command(BaseCommand):
 							))
 
 						# Bulk create.
+						print('.', end='', sep='', flush=True)
 						Lesson.objects.bulk_create(lessons)
 
-						for lesson in lessons:
-							# Generate presence for lessons at least one year ago.
-							if lesson.start <= (timezone.now() - relativedelta(years=1)):
-								lesson.prefill()
+		fprint('Prefilling lessons...')
+		for lesson in Lesson.objects.all():
+			# Generate presence for lessons at least one year ago.
+			if lesson.start <= (timezone.now() - relativedelta(years=1)):
+				lesson.prefill()
 
-								# Randomize the presence status.
-								for presence in lesson.presence_set.all():
-									presence.present = bool(random.randrange(100) < 90)  # 90 percentage chance of present.
-									presence.save()
+				# Randomize the presence status.
+				for presence in lesson.presence_set.all():
+					presence.present = bool(random.randrange(100) < 90)  # 90 percentage chance of present.
+					presence.save()
 
 	def generate_teachers(self, num):
 		for i in range(0, num):
