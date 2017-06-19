@@ -54,8 +54,12 @@ class Command(BaseCommand):
 	def __init__(self, *args, **kwargs):
 		self.student_id = 1000001
 		self.period = 'A'
+		self.small = False
 
 		super().__init__(*args, **kwargs)
+
+	def add_arguments(self, parser):
+		parser.add_argument('--small', action='store_true')
 
 	def get_fake(self):
 		return Factory.create('nl_NL')
@@ -64,6 +68,8 @@ class Command(BaseCommand):
 		return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(num_chars))
 
 	def handle(self, *args, **options):
+		self.small = bool(options['small'])
+
 		# Create admin.
 		try:
 			User.objects.create_superuser('admin', 'admin@localhost', 'Welkom01', first_name='Admin')
@@ -71,17 +77,24 @@ class Command(BaseCommand):
 			pass  # Ignore if duplicate.
 
 		# Create test courses, groups and
-		self.create_courses(4*2)  # 2 courses per year.
+		if self.small:
+			self.create_courses(4)
+		else:
+			self.create_courses(4*2)
 
 	def create_courses(self, num):
 		# Decide school years
 		school_years = list(self.school_year_range(years_back=4))
 
+		students_per_group = 14
+		if self.small:
+			students_per_group = 6
+
 		# Generate students.
 		fprint('Creating persons...')
 		slbers = list(self.generate_slbers(2*num))
 		teachers = list(self.generate_teachers(4*num))
-		students = list(self.generate_students((14*2), years_back=None, slbers=slbers))
+		students = list(self.generate_students(((students_per_group - 2)*2), years_back=None, slbers=slbers))
 
 		static_student, static_teacher, static_slber = self.generate_static()
 		students.append(static_student)
@@ -91,10 +104,10 @@ class Command(BaseCommand):
 		# Generate predefined groups.
 		fprint('Creating groups...')
 		predef_groups = list()
-		for group_number in range(int(len(students) / 16)):
+		for group_number in range(int(len(students) / students_per_group)):
 			# Get the students for this group.
 			group_students = list()
-			for _ in range(16):
+			for _ in range(students_per_group):
 				random_student = random.choice(students)
 				if random_student in group_students:
 					continue
@@ -200,8 +213,11 @@ class Command(BaseCommand):
 							if single_day.weekday() >= 5:
 								continue
 
-							# Randomly generate it, not every day. 70% chance of skipping and no lesson on that day.
-							if not bool(random.randrange(100) < 70):
+							# Randomly generate it, not every day. 70% chance (or 85 when small) of skipping and no lesson on that day.
+							percentage = 70
+							if self.small:
+								percentage = 85
+							if not bool(random.randrange(100) < percentage):
 								continue
 
 							# Random start and end time.
