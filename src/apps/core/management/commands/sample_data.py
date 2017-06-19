@@ -26,7 +26,7 @@ def daterange(start_date, end_date) -> typing.Generator[datetime.datetime, datet
 	:return:
 	:rtype: datetime.datetime
 	"""
-	for n in range(int ((end_date - start_date).days)):
+	for n in range(int((end_date - start_date).days)):
 		yield start_date + datetime.timedelta(n)
 
 
@@ -71,7 +71,7 @@ class Command(BaseCommand):
 			pass  # Ignore if duplicate.
 
 		# Create test courses, groups and
-		self.create_courses(4*4)  # 4 courses per year.
+		self.create_courses(4*2)  # 2 courses per year.
 
 	def create_courses(self, num):
 		# Decide school years
