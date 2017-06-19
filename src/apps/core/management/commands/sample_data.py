@@ -30,11 +30,30 @@ def daterange(start_date, end_date) -> typing.Generator[datetime.datetime, datet
 		yield start_date + datetime.timedelta(n)
 
 
+def period_dates(year, period):
+	if period == 'A':
+		return datetime.datetime(year=year, month=9, day=1), datetime.datetime(year=year, month=11, day=1)
+	elif period == 'B':
+		return datetime.datetime(year=year, month=11, day=2), datetime.datetime(year=year+1, month=1, day=30)
+	elif period == 'C':
+		return datetime.datetime(year=year+1, month=2, day=1), datetime.datetime(year=year+1, month=4, day=1)
+	elif period == 'D':
+		return datetime.datetime(year=year+1, month=4, day=2), datetime.datetime(year=year+1, month=6, day=19)
+	elif period == 'E':
+		return datetime.datetime(year=year+1, month=6, day=20), datetime.datetime(year=year+1, month=8, day=28)
+
+
+def period_range(year, period):
+	start, end = period_dates(year, period)
+	return daterange(start, end)
+
+
 class Command(BaseCommand):
 	help = 'Insert sample data (generated / predefined) into the current database.'
 
 	def __init__(self, *args, **kwargs):
 		self.student_id = 1000001
+		self.period = 'A'
 
 		super().__init__(*args, **kwargs)
 
@@ -52,8 +71,7 @@ class Command(BaseCommand):
 			pass  # Ignore if duplicate.
 
 		# Create test courses, groups and
-		print('Generating courses...')
-		self.create_courses(3)
+		self.create_courses(4*4)  # 4 courses per year.
 
 	def create_courses(self, num):
 		# Decide school years
@@ -63,7 +81,7 @@ class Command(BaseCommand):
 		fprint('Creating persons...')
 		slbers = list(self.generate_slbers(2*num))
 		teachers = list(self.generate_teachers(4*num))
-		students = list(self.generate_students((24*2), years_back=None, slbers=slbers))
+		students = list(self.generate_students((14*2), years_back=None, slbers=slbers))
 
 		static_student, static_teacher, static_slber = self.generate_static()
 		students.append(static_student)
@@ -73,10 +91,10 @@ class Command(BaseCommand):
 		# Generate predefined groups.
 		fprint('Creating groups...')
 		predef_groups = list()
-		for group_number in range(int(len(students) / 24)):
+		for group_number in range(int(len(students) / 16)):
 			# Get the students for this group.
 			group_students = list()
-			for _ in range(24):
+			for _ in range(16):
 				random_student = random.choice(students)
 				if random_student in group_students:
 					continue
@@ -99,15 +117,16 @@ class Command(BaseCommand):
 
 			predef_groups.append(group_set)
 
+		courses = list()
+		groups = list()
+
 		for c_idx in range(num):
 			print(' ')
 			fprint('Creating course... {} out of {}...'.format(c_idx+1, num))
-			courses = list()
-			groups = list()
+
+			period = self.next_period()
 
 			for years_back, (year, year_start, year_end) in enumerate(reversed(school_years)):
-				period = random.choice(Course.PERIOD_CHOICES)[0]
-
 				course = Course.objects.create(
 					code='{}-{}'.format(self.get_random_str(3).upper(), self.get_random_str(6).upper()),
 					school_year=year,
@@ -124,7 +143,8 @@ class Command(BaseCommand):
 					for group in group_list:
 						groups.append(group)
 
-						result_date = year_start + datetime.timedelta(days=30)
+						# Calculate the last day of the period as a result date.
+						result_date = period_dates(year_start.year, period)[1]
 
 						# Generate results.
 						for student in group.students.all():
@@ -171,7 +191,7 @@ class Command(BaseCommand):
 
 						# Generate lessons (for each days (some randomized stuff)).
 						lessons = list()
-						for single_day in daterange(year_start, year_end):
+						for single_day in period_range(year_start.year, period):
 							# Check if between the lesson months.
 							if single_day.month == 7:
 								continue
@@ -180,11 +200,9 @@ class Command(BaseCommand):
 							if single_day.weekday() >= 5:
 								continue
 
-							# Randomly generate it, not every day. 70% chance of skipping.
+							# Randomly generate it, not every day. 70% chance of skipping and no lesson on that day.
 							if not bool(random.randrange(100) < 70):
 								continue
-							# if not random.getrandbits(1):
-							# 	continue
 
 							# Random start and end time.
 							start_hour = random.randint(9, 12)
@@ -209,7 +227,15 @@ class Command(BaseCommand):
 
 		print(' ')
 		fprint('Prefilling lessons...')
-		for lesson in Lesson.objects.all():
+		lessons = Lesson.objects.all()
+		total_lessons = len(lessons)
+		for idx, lesson in enumerate(lessons):
+			print('.', end='', sep='', flush=True)
+			if idx % 100 == 0:
+				print(' {}% '.format(
+					int(idx / total_lessons * 100)
+				), end='', sep='', flush=True)
+
 			# Generate presence for lessons at least one year ago.
 			if lesson.start <= (timezone.now() - relativedelta(years=1)):
 				lesson.prefill()
@@ -218,6 +244,19 @@ class Command(BaseCommand):
 				for presence in lesson.presence_set.all():
 					presence.present = bool(random.randrange(100) < 90)  # 90 percentage chance of present.
 					presence.save()
+
+	def next_period(self):
+		if self.period == 'A':
+			self.period = 'B'
+		elif self.period == 'B':
+			self.period = 'C'
+		elif self.period == 'C':
+			self.period = 'D'
+		elif self.period == 'D':
+			self.period = 'E'
+		elif self.period == 'E':
+			self.period = 'A'
+		return self.period
 
 	def generate_teachers(self, num):
 		for i in range(0, num):
