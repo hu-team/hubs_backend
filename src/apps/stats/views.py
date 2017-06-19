@@ -13,7 +13,7 @@ class StudentStatistics(
 ):
 	permission_classes = [IsAuthenticated]
 	model = StudentProgressIndexPoint
-	queryset = StudentProgressIndexPoint.objects.all().order_by('-school_year', '-period')
+	queryset = StudentProgressIndexPoint.objects.all().order_by('school_year', 'period')
 	serializer_class = serializers.StudentIndexPointSerializer
 	lookup_field = 'student_id'
 
