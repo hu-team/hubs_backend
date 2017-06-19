@@ -95,6 +95,7 @@ class Command(BaseCommand):
 			predef_groups.append(group_set)
 
 		for c_idx in range(num):
+			print(' ')
 			fprint('Creating course... {} out of {}...'.format(c_idx+1, num))
 			courses = list()
 			groups = list()
@@ -201,6 +202,7 @@ class Command(BaseCommand):
 						print('.', end='', sep='', flush=True)
 						Lesson.objects.bulk_create(lessons)
 
+		print(' ')
 		fprint('Prefilling lessons...')
 		for lesson in Lesson.objects.all():
 			# Generate presence for lessons at least one year ago.
