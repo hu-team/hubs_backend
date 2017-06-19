@@ -2,6 +2,7 @@ import logging
 from celery.task import task
 from django.utils.timezone import now
 
+from apps.notifications.models import Notification
 from apps.school.models import Student, Course, StudentProgressIndexPoint, Result, Lesson
 from apps.school.utils import calculate_index
 
@@ -57,8 +58,20 @@ def daily_process_student_progress_index(**kwargs):
 				# Calculate index
 				index.index, situation = calculate_index(student, course, group, results)
 
+				# Save the old trigger in a var
+				was_trigged = index.triggered
+
 				# Set trigger.
 				index.triggered = bool(index.index is not None and index.index < TRIGGER_BELOW)
+
+				# Create a notification
+				if not was_trigged and index.triggered:
+					Notification.objects.create(
+						user=student.counselor.user,
+						title='Student Trigger Alert',
+						message="Er is een trigger afgegaan voor {}.".format(student.full_name),
+						object_type='trigger-notificatie',
+						object_key=student.id)
 
 				# Set trigger reason.
 				if index.triggered and situation:
