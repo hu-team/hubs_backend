@@ -286,18 +286,21 @@ class Command(BaseCommand):
 		counselor = Teacher.objects.create(
 			user=User.objects.create_user(
 				username='static_counselor', email='static_counselor@gmail.com', first_name='Arjan', last_name='de Man',
+				password='Welkom01'
 			),
 			is_counselor=True
 		)
 		teacher = Teacher.objects.create(
 			user=User.objects.create_user(
 				username='static_teacher', email='static_teacher@gmail.com', first_name='Henk', last_name='de Man',
+				password='Welkom01'
 			),
 			is_counselor=False
 		)
 		student = Student.objects.create(
 			user=User.objects.create_user(
-				username='static_student', email='static_student@gmail.com', first_name='Jan', last_name='de Man'
+				username='static_student', email='static_student@gmail.com', first_name='Jan', last_name='de Man',
+				password='Welkom01'
 			),
 			counselor=counselor,
 			joined_at=datetime.datetime(year=timezone.now().year - 4, month=7, day=1, tzinfo=utc),
