@@ -83,6 +83,8 @@ class ResultSerializer(serializers.ModelSerializer):
 
 	course = CourseSerializer(read_only=True)
 	student = StudentSerializer(read_only=True)
+	number_grade = serializers.IntegerField(required=False)
+	ladder_grade = serializers.DecimalField(required=False, max_digits=2)
 
 	class Meta:
 		model = Result
