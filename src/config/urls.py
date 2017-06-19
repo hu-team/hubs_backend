@@ -14,6 +14,7 @@ urlpatterns = [
 	url(r'^school/', include('apps.school.urls', namespace='school')),
 	url(r'^absence/', include('apps.absence.urls', namespace='absence')),
 	url(r'^notifications/', include('apps.notifications.urls', namespace='notifications')),
+	url(r'^stats/', include('apps.stats.urls', namespace='stats')),
 	url(r'^$', RedirectView.as_view(url=reverse_lazy('admin:index'))),
 	url(r'^schema/$', schema_view),
 ]

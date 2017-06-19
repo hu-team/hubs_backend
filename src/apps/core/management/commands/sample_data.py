@@ -52,21 +52,52 @@ class Command(BaseCommand):
 
 		# Create test courses, groups and
 		print('Generating courses...')
-		self.create_courses(4)
+		self.create_courses(3)
 
 	def create_courses(self, num):
+		# Decide school years
+		school_years = list(self.school_year_range(years_back=4))
+
+		# Generate students.
+		fprint('Creating persons...')
+		slbers = list(self.generate_slbers(2*num))
+		teachers = list(self.generate_teachers(4*num))
+		students = list(self.generate_students((24*2), years_back=None, slbers=slbers))
+
+		# Generate predefined groups.
+		fprint('Creating groups...')
+		predef_groups = list()
+		for group_number in range(int(len(students) / 24)):
+			# Get the students for this group.
+			group_students = list()
+			for _ in range(24):
+				random_student = random.choice(students)
+				if random_student in group_students:
+					continue
+				group_students.append(random_student)
+
+			# Generate each year.
+			group_set = list()
+
+			for years_back, (year, year_start, year_end) in enumerate(reversed(school_years)):
+				for period, _ in Course.PERIOD_CHOICES:
+					group = Group.objects.create(
+						code='VC{}-{}-{}'.format(
+							4-years_back, group_number, period
+						),
+						school_year=year,
+					)
+					group.students = group_students
+					group.save()
+					group_set.append(group)
+
+			predef_groups.append(group_set)
+
 		for c_idx in range(num):
-			fprint('Creating courses... {} out of {}...'.format(c_idx+1, num))
-			# Generate users.
-			teachers = list(self.generate_teachers(4))
-			slbers = list(self.generate_slbers(2))
-
-			# Decide school year
-			school_years = list(self.school_year_range(years_back=4))
-
-			# Generate courses. Including groups and students..
+			fprint('Creating course... {} out of {}...'.format(c_idx+1, num))
 			courses = list()
 			groups = list()
+
 			for years_back, (year, year_start, year_end) in enumerate(reversed(school_years)):
 				period = random.choice(Course.PERIOD_CHOICES)[0]
 
@@ -82,105 +113,96 @@ class Command(BaseCommand):
 				courses.append(course)
 
 				# Generate groups
-				for gpidx in range(3):
-					# Generate students.
-					students = list(self.generate_students(24, years_back=years_back, slbers=slbers))
+				for group_list in predef_groups:
+					for group in group_list:
+						# Create group.
+						group.save()
+						groups.append(group)
 
-					# Create group.
-					group = Group.objects.create(
-						code='V{}{}-{}'.format(
-							4-years_back, gpidx+1, self.get_random_str(6).upper()
-						),
-						school_year=year,
-					)
-					group.students = students
-					group.save()
-					groups.append(group)
+						result_date = year_start + datetime.timedelta(days=30)
 
-					result_date = year_start + datetime.timedelta(days=30)
+						# Generate results.
+						for student in group.students.all():
+							for i in range(0, 2):
+								is_ladder = bool(random.getrandbits(1))
+								ladder_grade = None
+								number_grade = None
+								ec_points = 0
 
-					# Generate results.
-					for student in students:
-						for i in range(0, 2):
-							is_ladder = bool(random.getrandbits(1))
-							ladder_grade = None
-							number_grade = None
-							ec_points = 0
-
-							passed = bool(random.getrandbits(1)) or bool(random.getrandbits(1))
-							not_there = bool(random.getrandbits(1)) and bool(random.getrandbits(1)) and bool(random.getrandbits(1))
-							if is_ladder:
-								if not_there:
-									ladder_grade = Result.LADDER_NT
-								elif passed:
-									ladder_grade = Result.LADDER_PASS
-									ec_points = 5
-								else:
-									ladder_grade = Result.LADDER_FAIL
-							else:
-								if not_there:
-									number_grade = 0.0
-								elif passed:
-									number_grade = round(random.uniform(5.5, 10.0), 1)
-								else:
-									number_grade = round(random.uniform(1.0, 5.4), 1)
-								if number_grade >= 5.5:
-									ec_points = 5
-
-							Result.objects.create(
-								course=course, student=student, ec_points=ec_points,
-								ladder_grade=ladder_grade, number_grade=number_grade,
-								created_at=result_date,
-							)
-
-							if ec_points == 0:
 								passed = bool(random.getrandbits(1)) or bool(random.getrandbits(1))
+								not_there = bool(random.getrandbits(1)) and bool(random.getrandbits(1)) and bool(random.getrandbits(1))
+								if is_ladder:
+									if not_there:
+										ladder_grade = Result.LADDER_NT
+									elif passed:
+										ladder_grade = Result.LADDER_PASS
+										ec_points = 5
+									else:
+										ladder_grade = Result.LADDER_FAIL
+								else:
+									if not_there:
+										number_grade = 0.0
+									elif passed:
+										number_grade = round(random.uniform(5.5, 10.0), 1)
+									else:
+										number_grade = round(random.uniform(1.0, 5.4), 1)
+									if number_grade >= 5.5:
+										ec_points = 5
+
 								Result.objects.create(
-									course=course, student=student, ec_points=5 if passed else 0,
-									ladder_grade=Result.LADDER_PASS if passed else Result.LADDER_FAIL, number_grade=None,
-									resit=True,
-									created_at=result_date + datetime.timedelta(days=4)
+									course=course, student=student, ec_points=ec_points,
+									ladder_grade=ladder_grade, number_grade=number_grade,
+									created_at=result_date,
 								)
 
-					# Generate lessons (for each days (some randomized stuff)).
-					for single_day in daterange(year_start, year_end):
-						# Check if between the lesson months.
-						if single_day.month == 7:
-							continue
+								if ec_points == 0:
+									passed = bool(random.getrandbits(1)) or bool(random.getrandbits(1))
+									Result.objects.create(
+										course=course, student=student, ec_points=5 if passed else 0,
+										ladder_grade=Result.LADDER_PASS if passed else Result.LADDER_FAIL, number_grade=None,
+										resit=True,
+										created_at=result_date + datetime.timedelta(days=4)
+									)
 
-						# Check if not in weekend.
-						if single_day.weekday() >= 5:
-							continue
+						# Generate lessons (for each days (some randomized stuff)).
+						for single_day in daterange(year_start, year_end):
+							# Check if between the lesson months.
+							if single_day.month == 7:
+								continue
 
-						# Randomly generate it, not every day.
-						if not random.getrandbits(1):
-							continue
+							# Check if not in weekend.
+							if single_day.weekday() >= 5:
+								continue
 
-						# Random start and end time.
-						start_hour = random.randint(9, 12)
-						start = datetime.datetime(
-							year=single_day.year, month=single_day.month, day=single_day.day, hour=start_hour, minute=0,
-							tzinfo=utc
-						)
-						end = start + datetime.timedelta(hours=2)
+							# Randomly generate it, not every day.
+							if not random.getrandbits(1):
+								continue
 
-						lesson = Lesson.objects.create(
-							course=course,
-							teacher=random.choice(teachers),
-							group=group,
-							start=start,
-							end=end,
-							ignore_absence=bool(random.getrandbits(1) and random.getrandbits(1))
-						)
+							# Random start and end time.
+							start_hour = random.randint(9, 12)
+							start = datetime.datetime(
+								year=single_day.year, month=single_day.month, day=single_day.day, hour=start_hour, minute=0,
+								tzinfo=utc
+							)
+							end = start + datetime.timedelta(hours=2)
 
-						# Generate presence for lessons at least one year ago.
-						if lesson.start <= (timezone.now() - relativedelta(years=1)):
-							lesson.prefill()
+							lesson = Lesson.objects.create(
+								course=course,
+								teacher=random.choice(teachers),
+								group=group,
+								start=start,
+								end=end,
+								ignore_absence=bool(random.getrandbits(1) and random.getrandbits(1))
+							)
 
-							# Randomize the presence status.
-							for presence in lesson.presence_set.all():
-								presence.present = bool(random.randrange(100) < 90)  # 90 percentage chance of present.
-								presence.save()
+							# Generate presence for lessons at least one year ago.
+							if lesson.start <= (timezone.now() - relativedelta(years=1)):
+								lesson.prefill()
+
+								# Randomize the presence status.
+								for presence in lesson.presence_set.all():
+									presence.present = bool(random.randrange(100) < 90)  # 90 percentage chance of present.
+									presence.save()
 
 	def generate_teachers(self, num):
 		for i in range(0, num):

@@ -34,7 +34,7 @@ def daily_process_student_progress_index(**kwargs):
 		for group, course in courses:
 			# Get the index or create it if it doesn't exist.
 			index, created = StudentProgressIndexPoint.objects.get_or_create(
-				student=student, period=course.period
+				student=student, period=course.period, school_year=course.school_year,
 			)
 
 			# Get all results for this course and student.

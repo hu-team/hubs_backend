@@ -88,6 +88,17 @@ class StudentProgressIndexPoint(SimpleModel):
 	student = models.ForeignKey(Student, related_name='progress_indexes', db_index=True)
 	period = models.CharField(db_index=True, max_length=10, choices=PERIOD_CHOICES)
 
+	school_year = models.CharField(
+		null=False,
+		validators=[validate_school_year],
+		max_length=9,
+		help_text='School year in 2016-2017 format.',
+		default='',
+	)
+	"""
+	Year of given course.
+	"""
+
 	complete = models.BooleanField(default=False)
 	"""
 	Was the month complete and did we had enough data to calculate the index?
@@ -109,10 +120,12 @@ class StudentProgressIndexPoint(SimpleModel):
 	"""
 
 	class Meta:
-		unique_together = ('student', 'period')
+		unique_together = ('student', 'period', 'school_year')
 
 	def __str__(self):
-		return 'IndexPoint ({}): {}, index={}, trigger={}'.format(self.period, self.student, self.index, self.triggered)
+		return 'IndexPoint ({} - {}): {}, index={}, trigger={}'.format(
+			self.period, self.school_year, self.student, self.index, self.triggered
+		)
 
 
 class Teacher(Person):
