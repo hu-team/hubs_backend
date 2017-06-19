@@ -59,6 +59,10 @@ class Student(Person):
 			end = now()
 		return int((end - self.joined_at).days / 365.25)
 
+	@property
+	def last_index_point(self):
+		return self.progress_indexes.filter(complete=True).order_by('school_year', 'period').first()
+
 
 class StudentProgressIndexPoint(SimpleModel):
 	PERIOD_A = 'A'

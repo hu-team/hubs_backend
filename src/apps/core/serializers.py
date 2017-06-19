@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from apps.core.models import User
 from apps.school.models import Student, Teacher
+from apps.stats.serializers import StudentIndexPointSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -78,7 +79,7 @@ class StudentSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Student
 		fields = (
-			'id', 'first_name', 'last_name', 'username', 'email', 'student_number','graduated',
+			'id', 'first_name', 'last_name', 'username', 'email', 'student_number', 'graduated',
 		)
 
 	def get_first_name(self, obj):
@@ -100,11 +101,12 @@ class StudentSerializerWithCounselor(serializers.ModelSerializer):
 	username = serializers.SerializerMethodField()
 	email = serializers.SerializerMethodField()
 	counselor = CounselorSerializer(read_only=True)
+	last_index_point = StudentIndexPointSerializer(read_only=True)
 
 	class Meta:
 		model = Student
 		fields = (
-			'id', 'first_name', 'last_name', 'username', 'email', 'student_number', 'graduated', 'counselor',
+			'id', 'first_name', 'last_name', 'username', 'email', 'student_number', 'graduated', 'counselor', 'last_index_point'
 		)
 
 	def get_first_name(self, obj):
