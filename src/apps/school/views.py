@@ -158,14 +158,6 @@ class LessonPresenceOverviewView(views.APIView):
 					presence=lesson_presence.present if lesson_presence else None,
 					absence_type=lesson_presence.absence_report.type if lesson_presence and lesson_presence.absence_report else None
 				))
-				# lesson_presence.absence_report = AbsenceReport(
-				# 	report_from=lesson.start - datetime.timedelta(days=2),
-				# 	type=AbsenceReport.TYPE_SICK,
-				# 	student=student,
-				# 	created_by=student.user,
-				# )
-				# break
-
 
 			data.append(row)
 
