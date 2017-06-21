@@ -16,7 +16,7 @@ class NotificationSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Notification
 		fields = (
-			'user', 'title', 'message', 'object_type', 'object_key',
+			'id', 'user', 'title', 'message', 'object_type', 'object_key',
 			'is_read', 'created_at'
 		)
 
@@ -29,5 +29,5 @@ class NotificationMiniSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Notification
 		fields = (
-			'user', 'title', 'is_read',
+			'id', 'user', 'title', 'is_read',
 		)
