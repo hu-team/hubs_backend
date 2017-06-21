@@ -66,7 +66,6 @@ class LessonSerializerLittle(serializers.ModelSerializer):
 
 class PresenceSerializer(serializers.ModelSerializer):
 	present = serializers.BooleanField(default=False)
-	# TODO: Use nested serializer.
 	absence_report = serializers.PrimaryKeyRelatedField(read_only=True)
 
 	class Meta:
