@@ -77,12 +77,14 @@ class PresenceSerializer(serializers.ModelSerializer):
 class ResultSerializer(serializers.ModelSerializer):
 
 	course = CourseSerializer(read_only=True)
+	course_id = serializers.IntegerField(write_only=True, required=True)
 	student = StudentSerializer(read_only=True)
+	student_id = serializers.IntegerField(write_only=True, required=True)
 	number_grade = serializers.IntegerField(required=False)
 	ladder_grade = serializers.DecimalField(required=False, max_digits=2, decimal_places=1)
 
 	class Meta:
 		model = Result
 		fields = (
-			'id', 'course', 'student', 'ec_points', 'number_grade', 'ladder_grade', 'resit',
+			'id', 'course', 'course_id', 'student', 'student_id', 'ec_points', 'number_grade', 'ladder_grade', 'resit',
 		)

@@ -19,3 +19,15 @@ class NotificationSerializer(serializers.ModelSerializer):
 			'user', 'title', 'message', 'object_type', 'object_key',
 			'is_read', 'created_at'
 		)
+
+
+class NotificationMiniSerializer(serializers.ModelSerializer):
+	user = serializers.PrimaryKeyRelatedField(read_only=True)
+	title = serializers.CharField(read_only=True)
+	is_read = serializers.BooleanField(required=True)
+
+	class Meta:
+		model = Notification
+		fields = (
+			'user', 'title', 'is_read',
+		)
