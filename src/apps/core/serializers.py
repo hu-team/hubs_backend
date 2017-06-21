@@ -75,11 +75,12 @@ class StudentSerializer(serializers.ModelSerializer):
 	last_name = serializers.SerializerMethodField()
 	username = serializers.SerializerMethodField()
 	email = serializers.SerializerMethodField()
+	last_index_point = StudentIndexPointSerializer(read_only=True)
 
 	class Meta:
 		model = Student
 		fields = (
-			'id', 'first_name', 'last_name', 'username', 'email', 'student_number', 'graduated',
+			'id', 'first_name', 'last_name', 'username', 'email', 'student_number', 'graduated', 'last_index_point'
 		)
 
 	def get_first_name(self, obj):

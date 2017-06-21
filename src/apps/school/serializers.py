@@ -20,11 +20,6 @@ class GroupSerializer(serializers.ModelSerializer):
 		many=True
 	)
 
-	# students = serializers.HyperlinkedRelatedField(
-	# 	view_name='core:students-detail', read_only=True,
-	# 	many=True
-	# )
-
 	class Meta:
 		model = Group
 		fields = (

@@ -2,12 +2,9 @@ import datetime
 
 import logging
 
-from django.db.models import Q
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
 from rest_framework_extensions.cache.decorators import cache_response
 
-from apps.absence.models import AbsenceReport
 from apps.core.permissions import ReadOnlyOrWriteAccess
 from apps.school.models import Lesson, Group, Presence, Course, Result
 from apps.school import serializers
@@ -24,11 +21,6 @@ class LessonViewSet(viewsets.ReadOnlyModelViewSet):
 	filter_backends = (DjangoFilterBackend,)
 	filter_fields = ('course', 'group', 'teacher', 'id')
 	ordering_fields = ('start', 'end')
-
-	# def get_serializer_class(self):
-	# 	if self.action == 'list':
-	# 		return serializers.LessonSerializerLittle
-	# 	return serializers.LessonSerializer
 
 	def get_queryset(self):
 		queryset = super().get_queryset()
