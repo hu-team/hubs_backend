@@ -425,7 +425,8 @@ class Presence(BaseModel):
 		Teacher,
 		null=True,
 		default=None,
-		db_index=True
+		db_index=True,
+		blank=True
 	)
 	"""
 	What teacher set the presence
@@ -436,7 +437,7 @@ class Presence(BaseModel):
 		help_text='Is the student present.'
 	)
 
-	absence_report = models.ForeignKey('absence.AbsenceReport', null=True, default=None)
+	absence_report = models.ForeignKey('absence.AbsenceReport', null=True, default=None, blank=True)
 	"""
 	Optional report to a report that is valid at the time of creation.
 	"""

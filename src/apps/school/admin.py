@@ -38,6 +38,7 @@ class GroupAdmin(admin.ModelAdmin):
 class PresenceInlineAdmin(admin.TabularInline):
 	model = Presence
 
+
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
 	icon = '<i class="material-icons">schedule</i>'
