@@ -16,5 +16,6 @@ schema_view = get_schema_view(title='Hubs API')
 
 urlpatterns = [
 	url(r'', include(router.urls)),
+	url(r'lessons/(?P<lesson_pk>[0-9]+)/presence-overview', views.LessonPresenceOverviewView.as_view(), name='lesson-presence-overview'),
 	url(r'^$', schema_view),
 ]
