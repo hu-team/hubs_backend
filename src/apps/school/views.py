@@ -2,9 +2,13 @@ import datetime
 
 import logging
 
-from rest_framework import viewsets
+from django.utils.timezone import now
+from rest_framework import viewsets, views
+from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.response import Response
 from rest_framework_extensions.cache.decorators import cache_response
 
+from apps.absence.models import AbsenceReport
 from apps.core.permissions import ReadOnlyOrWriteAccess
 from apps.school.models import Lesson, Group, Presence, Course, Result
 from apps.school import serializers
@@ -112,3 +116,49 @@ class PresenceViewSet(viewsets.ModelViewSet):
 				pass
 
 		return super().list(request, *args, **kwargs)
+
+
+class LessonPresenceOverviewView(views.APIView):
+	def get(self, request, lesson_pk, *args, **kwargs):
+		if not request.user or not request.user.is_teacher:
+			raise PermissionDenied(detail='User is not allowed to call this route!')
+
+		try:
+			lesson = Lesson.objects.select_related('group').get(pk=lesson_pk)
+
+			# Get previous lessons.
+			previous_lessons = lesson.course.lessons.filter(
+				start__lte=lesson.start,
+				group=lesson.group,
+			).order_by('-start')[:5]
+			previous_lessons = previous_lessons.reverse()
+		except Lesson.DoesNotExist:
+			raise NotFound(detail='Lesson not found!')
+
+		group = lesson.group
+		data = list()
+
+		for student in group.students.all():
+			row = dict(
+				id=student.id,
+				name=student.full_name,
+				lessons=list()
+			)
+
+			# Get previous and current lesson presence.
+			for lesson in previous_lessons:
+				if lesson.presence_set.count() < group.students.count():
+					lesson.prefill()
+
+				lesson_presence = student.presence_set.filter(lesson=lesson).first()
+				row['lessons'].append(dict(
+					id=lesson.id,
+					start=lesson.start.isoformat(),
+					end=lesson.end.isoformat(),
+					presence=lesson_presence.present if lesson_presence else None,
+					absence_type=lesson_presence.absence_report.type if lesson_presence and lesson_presence.absence_report else None
+				))
+
+			data.append(row)
+
+		return Response(data)
