@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from apps.core.serializers import StudentSerializer, TeacherSerializer, TeacherWithoutStudentSerializer
+from apps.core.serializers import StudentSerializer, TeacherSerializer, TeacherWithoutStudentSerializer, \
+	StudentSerializerMinified
 from apps.school.models import Lesson, Group, Presence, Course, Result
 import random
 
@@ -11,12 +12,12 @@ class CourseSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Course
 		fields = (
-			'id', 'code', 'name', 'period','ec_points', 'teachers'
+			'id', 'code', 'name', 'period', 'ec_points', 'teachers'
 		)
 
 
 class GroupSerializer(serializers.ModelSerializer):
-	students = StudentSerializer(
+	students = StudentSerializerMinified(
 		many=True
 	)
 
@@ -78,7 +79,7 @@ class ResultSerializer(serializers.ModelSerializer):
 
 	course = CourseSerializer(read_only=True)
 	course_id = serializers.IntegerField(write_only=True, required=True)
-	student = StudentSerializer(read_only=True)
+	student = StudentSerializerMinified(read_only=True)
 	student_id = serializers.IntegerField(write_only=True, required=True)
 	number_grade = serializers.IntegerField(required=False)
 	ladder_grade = serializers.DecimalField(required=False, max_digits=2, decimal_places=1)
