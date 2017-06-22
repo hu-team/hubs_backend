@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.core.models import User
-from apps.school.models import Student, Teacher
+from apps.school.models import Student, Teacher, StudentProgressIndexPoint
 from apps.stats.serializers import StudentIndexPointSerializer
 
 
@@ -75,7 +75,7 @@ class StudentSerializer(serializers.ModelSerializer):
 	last_name = serializers.SerializerMethodField()
 	username = serializers.SerializerMethodField()
 	email = serializers.SerializerMethodField()
-	last_index_point = StudentIndexPointSerializer(read_only=True)
+	last_index_point = serializers.SerializerMethodField(read_only=True)
 
 	class Meta:
 		model = Student
@@ -95,6 +95,16 @@ class StudentSerializer(serializers.ModelSerializer):
 	def get_email(self, obj):
 		return obj.user.email
 
+	def get_last_index_point(self, obj):
+		last_index = StudentProgressIndexPoint.objects.filter(
+			student=obj, complete=True
+		).order_by('school_year', 'period').last()
+		print(last_index)
+
+		if last_index:
+			return StudentIndexPointSerializer(last_index).data
+		return None
+
 
 class StudentSerializerWithCounselor(serializers.ModelSerializer):
 	first_name = serializers.SerializerMethodField()
@@ -102,7 +112,7 @@ class StudentSerializerWithCounselor(serializers.ModelSerializer):
 	username = serializers.SerializerMethodField()
 	email = serializers.SerializerMethodField()
 	counselor = CounselorSerializer(read_only=True)
-	last_index_point = StudentIndexPointSerializer(read_only=True)
+	last_index_point = serializers.SerializerMethodField(read_only=True)
 
 	class Meta:
 		model = Student
@@ -121,6 +131,15 @@ class StudentSerializerWithCounselor(serializers.ModelSerializer):
 
 	def get_email(self, obj):
 		return obj.user.email
+
+	def get_last_index_point(self, obj):
+		last_index = StudentProgressIndexPoint.objects.filter(
+			student=obj, complete=True
+		).order_by('school_year', 'period').last()
+
+		if last_index:
+			return StudentIndexPointSerializer(last_index).data
+		return None
 
 
 class StudentSerializerMinified(serializers.ModelSerializer):
