@@ -61,7 +61,7 @@ class Student(Person):
 
 	@property
 	def last_index_point(self):
-		return self.progress_indexes.filter(complete=True).order_by('-school_year', 'period').first()
+		return self.progress_indexes.filter(complete=True).order_by('-school_year', '-period').first()
 
 
 class StudentProgressIndexPoint(SimpleModel):
