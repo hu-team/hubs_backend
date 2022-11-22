@@ -25,7 +25,7 @@ coreapi==2.3.1
 PyJWT>=1.4.0,<2.0.0
 pytz
 requests==2.18.1
-Pillow==4.1.1
+Pillow==9.3.0
 Faker==0.7.17
 
 gunicorn
